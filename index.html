@@ -3,30 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipbook Kitab</title>
-    <link href="https://cdn.jsdelivr.net/npm/dflip@1.0.45/css/dflip.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/dflip@1.0.45/css/themify-icons.min.css" rel="stylesheet">
+    <title>Flipbook Kitab Al-Jurmiyah</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/dflip@1.0.90/css/dflip.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/dflip@1.0.90/css/themify-icons.min.css" rel="stylesheet">
 </head>
 <body style="margin:0; background-color:#2c3e50;">
 
-    <div id="pembungkus-buku" style="height:100vh;"></div>
+    <div id="flipbookContainer"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dflip@1.0.45/js/dflip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dflip@1.0.90/js/dflip.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            var filePDF = "al-jurmiyah.pdf";
-            var pengaturan = {
-                direction: 2,       // Mulai dari KANAN
-                duration: 800,      // Animasi lipat halaman
-                webgl: false,       // Pakai mode 2D supaya ringan di HP
-                hard: "none",       // Biar kertasnya lentur
-                backgroundColor: "#2c3e50"
+            // Pastikan nama file ini SAMA PERSIS dengan file di GitHub kamu
+            var filePDF = "al-jurmiyah.pdf"; 
+
+            var opsi = {
+                direction: 2,           // 2 artinya dari KANAN ke kiri (RTL)
+                duration: 800,          // Kecepatan balik halaman
+                webgl: false,           // Mode 2D supaya lancar di HP
+                height: "100vh"         // Tinggi memenuhi layar
             };
             
-            // Menjalankan Flipbook
-            $("#pembungkus-buku").flipBook(filePDF, pengaturan);
+            // Perintah: Tolong jadikan file PDF ini sebuah Buku Flip
+            $("#flipbookContainer").flipBook(filePDF, opsi);
         });
     </script>
 
