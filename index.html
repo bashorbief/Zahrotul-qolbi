@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +9,25 @@
 </head>
 <body style="margin:0; background-color:#2c3e50;">
 
-    <div id="df_book_custom" style="height:100vh;"></div>
+    <div id="container-kitab" style="height:100vh;"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dflip@1.0.45/js/dflip.min.js"></script>
 
     <script>
-        var pdfUrl = "al-jurmiyah.pdf";
-        var options = {
-            direction: 2, // Mulai dari kanan
-            duration: 700,
-            overwritePDFOutline: true
-        };
-        // Menjalankan Flipbook
-        $("#df_book_custom").flipBook(pdfUrl, options);
+        $(document).ready(function () {
+            // Kita pakai link lengkap supaya tidak bingung
+            var filePDF = "https://bashorbief.github.io/Zahrotul-qolbi/al-jurmiyah.pdf";
+
+            var opsi = {
+                direction: 2, // Dari KANAN ke kiri
+                duration: 800,
+                webgl: false // Pakai 2D supaya lancar di HP
+            };
+
+            // Menjalankan Flipbook
+            $("#container-kitab").flipBook(filePDF, opsi);
+        });
     </script>
 
 </body>
