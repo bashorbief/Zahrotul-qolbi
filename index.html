@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipbook Al-Jurmiyah</title>
+    <title>Kitab Al-Jurmiyah</title>
     <link href="https://cdn.jsdelivr.net/npm/dflip@1.0.90/css/dflip.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/dflip@1.0.90/css/themify-icons.min.css" rel="stylesheet">
 </head>
@@ -16,18 +16,17 @@
 
     <script>
         $(document).ready(function () {
-            // Kita panggil file PDF-nya
+            // Memanggil file PDF kamu langsung di folder utama
             var filePDF = "al-jurmiyah.pdf"; 
 
             var pengaturan = {
-                direction: 2,       // Animasi buka dari KANAN
-                duration: 800,      // Kecepatan lipatan kertas
-                webgl: false,       // Matikan WebGL supaya ringan di Android
-                allControls: "alt,next,prev,zoom", 
-                hideThumbnail: true
+                direction: 2,       // Animasi buka dari KANAN (RTL)
+                duration: 800,      // Kecepatan balik halaman
+                webgl: false,       // Matikan WebGL supaya ringan di HP
+                backgroundColor: "#2c3e50"
             };
             
-            // Jalankan animasinya
+            // Perintah Jalankan Animasi
             $("#pembungkus-buku").flipBook(filePDF, pengaturan);
         });
     </script>
