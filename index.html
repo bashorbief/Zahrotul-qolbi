@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Jurmiyah Flipbook Pro</title>
+    <title>Kitab Jurmiyah - Magic Corner Swipe</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
@@ -21,14 +21,14 @@
         
         #viewport {
             width: 100vw;
-            height: 90vh; /* Sisakan sedikit ruang agar tidak terlalu mepet */
+            height: 90vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         #flipbook {
-            width: 95%; /* Melebar hampir full layar */
+            width: 95%;
             height: 100%;
         }
 
@@ -60,18 +60,19 @@
         $(window).ready(function() {
             var fb = $("#flipbook");
 
+            // Menjalankan mesin animasi
             fb.turn({
                 width: fb.width(),
                 height: fb.height(),
                 autoCenter: true,
-                display: 'double', // KEMBALI KE MODE DUA HALAMAN (ANIMASI KEREN)
+                display: 'double', 
                 direction: 'rtl',
                 acceleration: true,
                 gradients: true,
-                elevation: 100    // Efek lengkungan kertas lebih terasa
+                elevation: 100
             });
 
-            // FITUR TAMBAHAN: Geser (Swipe) di mana saja
+            // LOGIKA MAGIC SWIPE: Usap di mana saja, yang keangkat tetap pojokan
             var startX;
             $(document).on("touchstart", function(e) {
                 startX = e.originalEvent.touches[0].pageX;
@@ -81,16 +82,18 @@
                 var endX = e.originalEvent.changedTouches[0].pageX;
                 var distance = startX - endX;
 
-                if (Math.abs(distance) > 70) { // Jika usapan lebih dari 70 pixel
+                // Jika geseran jari lebih dari 50 pixel
+                if (Math.abs(distance) > 50) { 
                     if (distance > 0) {
-                        fb.turn("next"); // Geser ke kiri
+                        fb.turn("next"); // Langsung memicu animasi pojok (ke kiri)
                     } else {
-                        fb.turn("previous"); // Geser ke kanan
+                        fb.turn("previous"); // Langsung memicu animasi pojok (ke kanan)
                     }
                 }
             });
         });
 
+        // Supaya ukuran tetap pas saat layar HP diputar/resize
         $(window).resize(function() {
             $("#flipbook").turn("size", $("#viewport").width(), $("#viewport").height());
         });
