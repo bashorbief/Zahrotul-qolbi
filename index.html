@@ -3,45 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kitab Al-Jurmiyah Flipbook</title>
+    <title>Flipbook Kitab Al-Jurmiyah</title>
     
     <link href="https://cdn.jsdelivr.net/npm/dflip@1.0.90/css/dflip.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/dflip@1.0.90/css/themify-icons.min.css" rel="stylesheet">
-    
-    <style>
-        body, html { margin: 0; padding: 0; height: 100%; background-color: #1a1a1a; overflow: hidden; }
-        #container-buku { height: 100vh; width: 100%; }
-        /* Memperbaiki tampilan tombol di HP */
-        ._df_button { background: #e74c3c !important; color: white !important; border: none !important; }
-    </style>
 </head>
-<body>
+<body style="margin:0; background-color:#1a1a1a;">
 
-    <div id="container-buku"></div>
+    <div id="df_book_custom" style="height:100vh;"></div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dflip@1.0.90/js/dflip.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            // Tentukan sumber file PDF kamu
-            var pdf_file = "al-jurmiyah.pdf";
+            // Gunakan path lengkap agar GitHub tidak bingung
+            var pdfUrl = "https://bashorbief.github.io/Zahrotul-qolbi/al-jurmiyah.pdf";
 
-            // KONFIGURASI RUMIT UNTUK EFEK BUKU ASLI
             var options = {
-                direction: 2,           // 2 = RTL (Mulai dari kanan untuk Kitab)
-                duration: 700,          // Kecepatan balik halaman
-                webgl: true,            // Mengaktifkan efek 3D jika HP mendukung
+                direction: 2,           // Mulai dari kanan (RTL)
+                duration: 700,
+                webgl: false,           // Matikan 3D agar tidak berat & tidak gampang blank
+                scrollWheel: false,
                 backgroundColor: "#1a1a1a",
-                enableSound: true,       // Ada suara kertas jika suara HP nyala
-                hard: "none",            // Kertas lentur seperti kitab asli
-                allControls: "alt,next,prev,zoom,full",
-                hideThumbnail: true,     // Biar tidak menutupi layar HP
-                moreControls: "download,print"
+                forceDownload: false
             };
 
-            // JALANKAN PROSES PERUBAHAN PDF KE FLIPBOOK
-            $("#container-buku").flipBook(pdf_file, options);
+            // Menjalankan Flipbook
+            var flipBook = $("#df_book_custom").flipBook(pdfUrl, options);
         });
     </script>
 
