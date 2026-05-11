@@ -3,25 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Jurmiyah - Custom Direction</title>
+    <title>Kitab Jurmiyah - Full Screen Fix</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
-        body { background-color: #000; margin: 0; padding: 0; overflow: hidden; }
-        
-        #viewport {
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #000; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
             width: 100vw;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        }
+        
+        #viewport {
+            width: 100%;
+            height: 100%;
         }
 
-        /* Trik Satu Halaman Full */
         #flipbook {
-            width: 200vw !important; 
+            width: 100vw !important;
             height: 100vh !important;
         }
 
@@ -31,10 +35,12 @@
             height: 100vh !important;
         }
 
+        /* Memaksa gambar menutupi seluruh layar HP */
         .page img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            object-fit: fill; /* Gambar ditarik full ke pojok layar */
         }
     </style>
 </head>
@@ -55,15 +61,17 @@
             var fb = $("#flipbook");
 
             fb.turn({
+                width: $(window).width(),
+                height: $(window).height(),
+                display: 'single', 
                 acceleration: true,
                 gradients: true,
-                elevation: 200,
-                duration: 1000,
-                direction: 'ltr', // DIUBAH KE LTR (Kiri ke Kanan)
-                display: 'double'
+                elevation: 100,
+                // Kita matikan arah default biar gak bentrok sama swipe manual
+                autoCenter: true
             });
 
-            // LOGIKA USAP SESUAI PERMINTAAN: KIRI KE KANAN --->
+            // LOGIKA USAP: KIRI KE KANAN (--->) UNTUK HALAMAN SELANJUTNYA
             var startX;
             $(document).on("touchstart", function(e) {
                 startX = e.originalEvent.touches[0].pageX;
@@ -73,17 +81,19 @@
                 var endX = e.originalEvent.changedTouches[0].pageX;
                 var distance = startX - endX;
 
-                if (Math.abs(distance) > 50) { 
-                    // JIKA USAP KE KANAN (distance negatif), MAKA NEXT
-                    if (distance < 0) {
-                        fb.turn("next"); 
-                    } 
-                    // JIKA USAP KE KIRI, MAKA PREVIOUS
-                    else {
-                        fb.turn("previous");
-                    }
+                // Jika jari ditarik ke KANAN (Kiri ke Kanan)
+                if (distance < -50) { 
+                    fb.turn("next"); 
+                } 
+                // Jika jari ditarik ke KIRI
+                else if (distance > 50) {
+                    fb.turn("previous");
                 }
             });
+        });
+
+        $(window).resize(function() {
+            $("#flipbook").turn("size", $(window).width(), $(window).height());
         });
     </script>
 </body>
