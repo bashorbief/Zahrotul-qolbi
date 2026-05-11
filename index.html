@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Jurmiyah - Gaya Madrasah</title>
+    <title>Kitab Jurmiyah - Engsel Kanan</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
@@ -44,9 +44,10 @@
                 display: 'single', 
                 acceleration: true,
                 gradients: true,
-                elevation: 150,    
+                elevation: 200,    
                 duration: 1000,    
-                direction: 'rtl',  // PAKSA ARAH KITAB (Kanan ke Kiri)
+                // INI KUNCINYA: LTR agar engsel di kanan untuk mode single
+                direction: 'ltr',  
                 autoCenter: true
             });
 
@@ -59,11 +60,11 @@
                 var endX = e.originalEvent.changedTouches[0].pageX;
                 var distance = startX - endX;
 
-                // LOGIKA KITAB: USAP KE KANAN (--->) UNTUK LANJUT KE HALAMAN BERIKUTNYA
+                // LOGIKA KITAB: USAP KE KANAN (--->) UNTUK LANJUT
+                // Karena engsel di kanan, kita panggil 'previous' untuk arah sebaliknya
                 if (distance < -50) { 
                     fb.turn("next"); 
                 } 
-                // USAP KE KIRI (<---) UNTUK BALIK KE HALAMAN SEBELUMNYA
                 else if (distance > 50) {
                     fb.turn("previous");
                 }
