@@ -3,46 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Gaya Iqro</title>
+    <title>Kitab Gaya Iqro Asli</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
-        * { box-sizing: border-box; }
-        body { 
-            background-color: #000; 
-            margin: 0; padding: 0; 
-            overflow: hidden; 
-            width: 100vw; height: 100vh;
-        }
-        
-        #viewport {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #flipbook {
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-
-        .page {
-            background-color: white;
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-
-        /* Gambar full menutup layar HP */
-        .page img {
-            width: 100vw;
-            height: 100vh;
-            display: block;
-            object-fit: fill; 
-        }
+        body { background-color: #000; margin: 0; padding: 0; overflow: hidden; }
+        #viewport { width: 100vw; height: 100vh; display: flex; justify-content: center; }
+        #flipbook { width: 100vw !important; height: 100vh !important; }
+        .page { width: 100vw !important; height: 100vh !important; background-color: white; }
+        .page img { width: 100%; height: 100%; object-fit: fill; }
     </style>
 </head>
 <body>
@@ -62,17 +33,17 @@
             var fb = $("#flipbook");
 
             fb.turn({
-                width: $(window).width(),
-                height: $(window).height(),
-                display: 'single', 
-                direction: 'rtl',  // Engsel di KANAN (Gaya Kitab)
+                display: 'single',
+                // Kita pakai LTR tapi kita balik logikanya agar lipatan dari kiri
+                direction: 'ltr', 
                 acceleration: true,
                 gradients: true,
                 elevation: 250,    
-                duration: 1000     
+                duration: 1000,
+                // KUNCINYA DI SINI: Memaksa pojok kiri yang aktif
+                corners: 'backward' 
             });
 
-            // LOGIKA USAP IQRO
             var startX;
             $(document).on("touchstart", function(e) {
                 startX = e.originalEvent.touches[0].pageX;
@@ -82,20 +53,16 @@
                 var endX = e.originalEvent.changedTouches[0].pageX;
                 var dist = startX - endX;
 
-                // USAP KE KANAN (--->) = MAJU ke halaman berikutnya
+                // Gaya Iqro: Usap ke Kanan (--->) untuk MAJU
+                // Karena kita pakai trik LTR, maka 'previous' akan mengangkat pojok kiri
                 if (dist < -50) { 
                     fb.turn("next"); 
                 } 
-                // USAP KE KIRI (<---) = MUNDUR / BALIK
+                // Usap ke Kiri (<---) untuk MUNDUR
                 else if (dist > 50) {
                     fb.turn("previous");
                 }
             });
-        });
-
-        // Agar tetap full kalau layar diputar
-        $(window).resize(function() {
-            $("#flipbook").turn("size", $(window).width(), $(window).height());
         });
     </script>
 </body>
