@@ -9,20 +9,52 @@
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
-        body { background-color: #000; margin: 0; padding: 0; overflow: hidden; }
-        #flipbook { width: 100vw; height: 100vh; }
-        .page { width: 100vw; height: 100vh; background-color: white; }
-        .page img { width: 100%; height: 100%; object-fit: fill; }
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #000; 
+            margin: 0; padding: 0; 
+            overflow: hidden; 
+            width: 100vw; height: 100vh;
+        }
+        
+        #viewport {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #flipbook {
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        .page {
+            background-color: white;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        /* Gambar full menutup layar HP */
+        .page img {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+            object-fit: fill; 
+        }
     </style>
 </head>
 <body>
 
-    <div id="flipbook">
-        <div class="page"><img src="halaman1.jpg"></div>
-        <div class="page"><img src="halaman2.jpg"></div>
-        <div class="page"><img src="halaman3.jpg"></div>
-        <div class="page"><img src="halaman4.jpg"></div>
-        <div class="page"><img src="halaman5.jpg"></div>
+    <div id="viewport">
+        <div id="flipbook">
+            <div class="page"><img src="halaman1.jpg"></div>
+            <div class="page"><img src="halaman2.jpg"></div>
+            <div class="page"><img src="halaman3.jpg"></div>
+            <div class="page"><img src="halaman4.jpg"></div>
+            <div class="page"><img src="halaman5.jpg"></div>
+        </div>
     </div>
 
     <script type="text/javascript">
@@ -30,15 +62,17 @@
             var fb = $("#flipbook");
 
             fb.turn({
-                display: 'single',
-                direction: 'rtl', // Kunci Utama: Engsel pindah ke KANAN
+                width: $(window).width(),
+                height: $(window).height(),
+                display: 'single', 
+                direction: 'rtl',  // Engsel di KANAN (Gaya Kitab)
                 acceleration: true,
                 gradients: true,
-                elevation: 200,
-                duration: 1000
+                elevation: 250,    
+                duration: 1000     
             });
 
-            // LOGIKA SWIPE IQRO
+            // LOGIKA USAP IQRO
             var startX;
             $(document).on("touchstart", function(e) {
                 startX = e.originalEvent.touches[0].pageX;
@@ -48,15 +82,20 @@
                 var endX = e.originalEvent.changedTouches[0].pageX;
                 var dist = startX - endX;
 
-                // USAP KE KANAN (--->) = HALAMAN BERIKUTNYA
+                // USAP KE KANAN (--->) = MAJU ke halaman berikutnya
                 if (dist < -50) { 
                     fb.turn("next"); 
                 } 
-                // USAP KE KIRI (<---) = BALIK HALAMAN
+                // USAP KE KIRI (<---) = MUNDUR / BALIK
                 else if (dist > 50) {
                     fb.turn("previous");
                 }
             });
+        });
+
+        // Agar tetap full kalau layar diputar
+        $(window).resize(function() {
+            $("#flipbook").turn("size", $(window).width(), $(window).height());
         });
     </script>
 </body>
