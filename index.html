@@ -3,38 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Jurmiyah - Magic Corner Swipe</title>
+    <title>Kitab Jurmiyah - Custom Direction</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
-        body { 
-            background-color: #1a1a1a; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden;
-        }
+        body { background-color: #000; margin: 0; padding: 0; overflow: hidden; }
         
         #viewport {
             width: 100vw;
-            height: 90vh;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
+        /* Trik Satu Halaman Full */
         #flipbook {
-            width: 95%;
-            height: 100%;
+            width: 200vw !important; 
+            height: 100vh !important;
         }
 
         .page {
             background-color: white;
-            box-shadow: 0 0 20px rgba(0,0,0,0.6);
+            width: 100vw !important;
+            height: 100vh !important;
         }
 
         .page img {
@@ -60,19 +54,16 @@
         $(window).ready(function() {
             var fb = $("#flipbook");
 
-            // Menjalankan mesin animasi
             fb.turn({
-                width: fb.width(),
-                height: fb.height(),
-                autoCenter: true,
-                display: 'double', 
-                direction: 'rtl',
                 acceleration: true,
                 gradients: true,
-                elevation: 100
+                elevation: 200,
+                duration: 1000,
+                direction: 'ltr', // DIUBAH KE LTR (Kiri ke Kanan)
+                display: 'double'
             });
 
-            // LOGIKA MAGIC SWIPE: Usap di mana saja, yang keangkat tetap pojokan
+            // LOGIKA USAP SESUAI PERMINTAAN: KIRI KE KANAN --->
             var startX;
             $(document).on("touchstart", function(e) {
                 startX = e.originalEvent.touches[0].pageX;
@@ -82,22 +73,18 @@
                 var endX = e.originalEvent.changedTouches[0].pageX;
                 var distance = startX - endX;
 
-                // Jika geseran jari lebih dari 50 pixel
                 if (Math.abs(distance) > 50) { 
-                    if (distance > 0) {
-                        fb.turn("next"); // Langsung memicu animasi pojok (ke kiri)
-                    } else {
-                        fb.turn("previous"); // Langsung memicu animasi pojok (ke kanan)
+                    // JIKA USAP KE KANAN (distance negatif), MAKA NEXT
+                    if (distance < 0) {
+                        fb.turn("next"); 
+                    } 
+                    // JIKA USAP KE KIRI, MAKA PREVIOUS
+                    else {
+                        fb.turn("previous");
                     }
                 }
             });
         });
-
-        // Supaya ukuran tetap pas saat layar HP diputar/resize
-        $(window).resize(function() {
-            $("#flipbook").turn("size", $("#viewport").width(), $("#viewport").height());
-        });
     </script>
-
 </body>
 </html>
