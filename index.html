@@ -3,15 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Gaya Iqro Asli</title>
+    <title>Kitab Gaya Iqro</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
         body { background-color: #000; margin: 0; padding: 0; overflow: hidden; }
-        #viewport { width: 100vw; height: 100vh; display: flex; justify-content: center; }
-        #flipbook { width: 100vw !important; height: 100vh !important; }
+        #viewport { width: 100vw; height: 100vh; display: flex; justify-content: center; overflow: hidden; }
+        
+        /* Trik: Buat flipbook 2x lebar layar tapi geser agar hanya satu sisi yang kelihatan */
+        #flipbook { 
+            width: 200vw !important; 
+            height: 100vh !important; 
+            margin-left: 100vw; /* Geser engsel ke kanan layar */
+        }
+        
         .page { width: 100vw !important; height: 100vh !important; background-color: white; }
         .page img { width: 100%; height: 100%; object-fit: fill; }
     </style>
@@ -33,15 +40,15 @@
             var fb = $("#flipbook");
 
             fb.turn({
-                display: 'single',
-                // Kita pakai LTR tapi kita balik logikanya agar lipatan dari kiri
-                direction: 'ltr', 
+                width: $(window).width() * 2,
+                height: $(window).height(),
+                display: 'double',
                 acceleration: true,
                 gradients: true,
-                elevation: 250,    
-                duration: 1000,
-                // KUNCINYA DI SINI: Memaksa pojok kiri yang aktif
-                corners: 'backward' 
+                elevation: 300,    
+                duration: 1200,
+                // KUNCI UTAMA: Arah RTL agar engsel di kanan
+                direction: 'rtl'
             });
 
             var startX;
@@ -53,12 +60,11 @@
                 var endX = e.originalEvent.changedTouches[0].pageX;
                 var dist = startX - endX;
 
-                // Gaya Iqro: Usap ke Kanan (--->) untuk MAJU
-                // Karena kita pakai trik LTR, maka 'previous' akan mengangkat pojok kiri
+                // USAP KE KANAN (--->) = MAJU (Angkat pojok kiri ke arah kanan)
                 if (dist < -50) { 
                     fb.turn("next"); 
                 } 
-                // Usap ke Kiri (<---) untuk MUNDUR
+                // USAP KE KIRI (<---) = BALIK
                 else if (dist > 50) {
                     fb.turn("previous");
                 }
