@@ -3,16 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Jurmiyah - Single Page</title>
+    <title>Kitab Jurmiyah Flipbook Pro</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
         body { 
-            background-color: #000; /* Hitam agar fokus ke kitab */
+            background-color: #1a1a1a; 
             margin: 0; 
-            padding: 0;
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -22,27 +21,26 @@
         
         #viewport {
             width: 100vw;
-            height: 100vh;
+            height: 90vh; /* Sisakan sedikit ruang agar tidak terlalu mepet */
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
         #flipbook {
-            width: 100%;
+            width: 95%; /* Melebar hampir full layar */
             height: 100%;
         }
 
         .page {
-            background-color: #fff;
-            width: 100%;
-            height: 100%;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.6);
         }
 
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Gambar penuh tanpa terpotong */
+            object-fit: contain;
         }
     </style>
 </head>
@@ -63,35 +61,38 @@
             var fb = $("#flipbook");
 
             fb.turn({
-                width: $(window).width(),
-                height: $(window).height(),
+                width: fb.width(),
+                height: fb.height(),
                 autoCenter: true,
-                display: 'single', // PAKSA SATU HALAMAN
-                direction: 'rtl',   // Tetap dari kanan ke kiri
+                display: 'double', // KEMBALI KE MODE DUA HALAMAN (ANIMASI KEREN)
+                direction: 'rtl',
                 acceleration: true,
                 gradients: true,
-                elevation: 0        // Menghilangkan bayangan tekukan agar fokus ke gambar full
+                elevation: 100    // Efek lengkungan kertas lebih terasa
             });
 
-            // Mendukung swipe/geser di mana saja pada layar
+            // FITUR TAMBAHAN: Geser (Swipe) di mana saja
+            var startX;
             $(document).on("touchstart", function(e) {
-                var startX = e.originalEvent.touches[0].pageX;
-                $(document).one("touchend", function(e) {
-                    var endX = e.originalEvent.changedTouches[0].pageX;
-                    if (startX - endX > 50) {
+                startX = e.originalEvent.touches[0].pageX;
+            });
+
+            $(document).on("touchend", function(e) {
+                var endX = e.originalEvent.changedTouches[0].pageX;
+                var distance = startX - endX;
+
+                if (Math.abs(distance) > 70) { // Jika usapan lebih dari 70 pixel
+                    if (distance > 0) {
                         fb.turn("next"); // Geser ke kiri
-                    } else if (endX - startX > 50) {
+                    } else {
                         fb.turn("previous"); // Geser ke kanan
                     }
-                });
+                }
             });
         });
 
-        // Update ukuran jika layar berubah (misal rotasi)
         $(window).resize(function() {
-            var w = $(window).width();
-            var h = $(window).height();
-            $("#flipbook").turn("size", w, h);
+            $("#flipbook").turn("size", $("#viewport").width(), $("#viewport").height());
         });
     </script>
 
