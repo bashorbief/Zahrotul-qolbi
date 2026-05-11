@@ -3,35 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Jurmiyah - Engsel Kanan</title>
+    <title>Kitab Gaya Iqro</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
-        * { box-sizing: border-box; }
-        body { 
-            background-color: #000; 
-            margin: 0; padding: 0; 
-            overflow: hidden; 
-            width: 100vw; height: 100vh;
-        }
-        #viewport { width: 100%; height: 100%; }
-        #flipbook { width: 100vw !important; height: 100vh !important; }
-        .page { background-color: white; width: 100vw !important; height: 100vh !important; }
-        .page img { width: 100vw; height: 100vh; display: block; object-fit: fill; }
+        body { background-color: #000; margin: 0; padding: 0; overflow: hidden; }
+        #flipbook { width: 100vw; height: 100vh; }
+        .page { width: 100vw; height: 100vh; background-color: white; }
+        .page img { width: 100%; height: 100%; object-fit: fill; }
     </style>
 </head>
 <body>
 
-    <div id="viewport">
-        <div id="flipbook">
-            <div class="page"><img src="halaman1.jpg"></div>
-            <div class="page"><img src="halaman2.jpg"></div>
-            <div class="page"><img src="halaman3.jpg"></div>
-            <div class="page"><img src="halaman4.jpg"></div>
-            <div class="page"><img src="halaman5.jpg"></div>
-        </div>
+    <div id="flipbook">
+        <div class="page"><img src="halaman1.jpg"></div>
+        <div class="page"><img src="halaman2.jpg"></div>
+        <div class="page"><img src="halaman3.jpg"></div>
+        <div class="page"><img src="halaman4.jpg"></div>
+        <div class="page"><img src="halaman5.jpg"></div>
     </div>
 
     <script type="text/javascript">
@@ -39,18 +30,15 @@
             var fb = $("#flipbook");
 
             fb.turn({
-                width: $(window).width(),
-                height: $(window).height(),
-                display: 'single', 
+                display: 'single',
+                direction: 'rtl', // Kunci Utama: Engsel pindah ke KANAN
                 acceleration: true,
                 gradients: true,
-                elevation: 200,    
-                duration: 1000,    
-                // INI KUNCINYA: LTR agar engsel di kanan untuk mode single
-                direction: 'ltr',  
-                autoCenter: true
+                elevation: 200,
+                duration: 1000
             });
 
+            // LOGIKA SWIPE IQRO
             var startX;
             $(document).on("touchstart", function(e) {
                 startX = e.originalEvent.touches[0].pageX;
@@ -58,21 +46,17 @@
 
             $(document).on("touchend", function(e) {
                 var endX = e.originalEvent.changedTouches[0].pageX;
-                var distance = startX - endX;
+                var dist = startX - endX;
 
-                // LOGIKA KITAB: USAP KE KANAN (--->) UNTUK LANJUT
-                // Karena engsel di kanan, kita panggil 'previous' untuk arah sebaliknya
-                if (distance < -50) { 
+                // USAP KE KANAN (--->) = HALAMAN BERIKUTNYA
+                if (dist < -50) { 
                     fb.turn("next"); 
                 } 
-                else if (distance > 50) {
+                // USAP KE KIRI (<---) = BALIK HALAMAN
+                else if (dist > 50) {
                     fb.turn("previous");
                 }
             });
-        });
-
-        $(window).resize(function() {
-            $("#flipbook").turn("size", $(window).width(), $(window).height());
         });
     </script>
 </body>
