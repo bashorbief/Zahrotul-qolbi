@@ -3,73 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Gaya Iqro</title>
-    
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
-
     <style>
-        body { background-color: #000; margin: 0; padding: 0; overflow: hidden; }
-        #viewport { width: 100vw; height: 100vh; display: flex; justify-content: center; overflow: hidden; }
+        body { background: #111; margin: 0; overflow: hidden; font-family: sans-serif; }
+        #book { width: 100vw; height: 100vh; position: relative; perspective: 2000px; }
         
-        /* Trik: Buat flipbook 2x lebar layar tapi geser agar hanya satu sisi yang kelihatan */
-        #flipbook { 
-            width: 200vw !important; 
-            height: 100vh !important; 
-            margin-left: 100vw; /* Geser engsel ke kanan layar */
+        .page {
+            width: 100%; height: 100%;
+            position: absolute;
+            top: 0; left: 0;
+            transform-origin: left center; /* Engsel di kiri untuk buka ke kanan */
+            transition: transform 0.6s cubic-bezier(0.15, 0.85, 0.35, 1);
+            backface-visibility: hidden;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+            pointer-events: none;
         }
-        
-        .page { width: 100vw !important; height: 100vh !important; background-color: white; }
+
         .page img { width: 100%; height: 100%; object-fit: fill; }
+
+        /* Efek terangkat: Ujung kanan yang melenting duluan */
+        .flipped {
+            transform: rotateY(150deg) rotateZ(-5deg) translateY(-20px);
+        }
     </style>
 </head>
 <body>
 
-    <div id="viewport">
-        <div id="flipbook">
-            <div class="page"><img src="halaman1.jpg"></div>
-            <div class="page"><img src="halaman2.jpg"></div>
-            <div class="page"><img src="halaman3.jpg"></div>
-            <div class="page"><img src="halaman4.jpg"></div>
-            <div class="page"><img src="halaman5.jpg"></div>
-        </div>
-    </div>
+<div id="book">
+    <div class="page" id="p1" style="z-index:1"><img src="halaman1.jpg"></div>
+    <div class="page" id="p2" style="z-index:2"><img src="halaman2.jpg"></div>
+    <div class="page" id="p3" style="z-index:3"><img src="halaman3.jpg"></div>
+    <div class="page" id="p4" style="z-index:4"><img src="halaman4.jpg"></div>
+    <div class="page" id="p5" style="z-index:5"><img src="halaman5.jpg"></div>
+</div>
 
-    <script type="text/javascript">
-        $(window).ready(function() {
-            var fb = $("#flipbook");
+<script>
+    let current = 5; // Mulai dari halaman 5
+    let startX = 0;
 
-            fb.turn({
-                width: $(window).width() * 2,
-                height: $(window).height(),
-                display: 'double',
-                acceleration: true,
-                gradients: true,
-                elevation: 300,    
-                duration: 1200,
-                // KUNCI UTAMA: Arah RTL agar engsel di kanan
-                direction: 'rtl'
-            });
+    document.addEventListener('touchstart', e => {
+        startX = e.touches[0].pageX;
+    });
 
-            var startX;
-            $(document).on("touchstart", function(e) {
-                startX = e.originalEvent.touches[0].pageX;
-            });
+    document.addEventListener('touchmove', e => {
+        let moveX = e.touches[0].pageX;
+        let diff = moveX - startX;
+        
+        // Animasi mengikuti usapan jari secara real-time
+        if (diff > 0 && current > 1) {
+            let rotation = Math.min(diff / 2, 150);
+            let lift = Math.min(diff / 10, 20);
+            document.getElementById('p' + current).style.transition = "none";
+            document.getElementById('p' + current).style.transform = `rotateY(${rotation}deg) rotateZ(${-rotation/30}deg) translateY(${-lift}px)`;
+        }
+    });
 
-            $(document).on("touchend", function(e) {
-                var endX = e.originalEvent.changedTouches[0].pageX;
-                var dist = startX - endX;
+    document.addEventListener('touchend', e => {
+        let endX = e.changedTouches[0].pageX;
+        let diff = endX - startX;
+        let el = document.getElementById('p' + current);
 
-                // USAP KE KANAN (--->) = MAJU (Angkat pojok kiri ke arah kanan)
-                if (dist < -50) { 
-                    fb.turn("next"); 
-                } 
-                // USAP KE KIRI (<---) = BALIK
-                else if (dist > 50) {
-                    fb.turn("previous");
-                }
-            });
-        });
-    </script>
+        el.style.transition = "transform 0.6s cubic-bezier(0.15, 0.85, 0.35, 1)";
+
+        // Jika usapan ke kanan cukup jauh, buka halaman (kiri ke kanan)
+        if (diff > 80 && current > 1) {
+            el.classList.add('flipped');
+            el.style.transform = ""; // Reset inline style biar pakai class CSS
+            current--;
+        } else {
+            // Balik lagi kalau gak jadi (Bolak-balik)
+            el.style.transform = "rotateY(0deg)";
+        }
+    });
+
+    // Untuk balik halaman (Usap ke Kiri)
+    document.addEventListener('touchstart', e => startX = e.touches[0].pageX);
+    // (Logika tutup halaman bisa ditambah di sini dengan arah sebaliknya)
+</script>
+
 </body>
 </html>
