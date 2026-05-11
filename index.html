@@ -3,15 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Flipbook Kitab Jurmiyah</title>
+    <title>Kitab Jurmiyah - Single Page</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
         body { 
-            background-color: #1a1a1a; 
+            background-color: #000; /* Hitam agar fokus ke kitab */
             margin: 0; 
+            padding: 0;
             display: flex; 
             justify-content: center; 
             align-items: center; 
@@ -19,31 +20,29 @@
             overflow: hidden;
         }
         
-        /* Area tempat buku berada */
         #viewport {
-            width: 90vw;
-            height: 80vh;
+            width: 100vw;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Ukuran Buku */
         #flipbook {
             width: 100%;
             height: 100%;
         }
 
-        /* Gaya setiap halaman */
         .page {
-            background-color: white;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            background-color: #fff;
+            width: 100%;
+            height: 100%;
         }
 
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Agar gambar tidak gepeng */
+            object-fit: contain; /* Gambar penuh tanpa terpotong */
         }
     </style>
 </head>
@@ -63,21 +62,36 @@
         $(window).ready(function() {
             var fb = $("#flipbook");
 
-            // Menjalankan animasi flip
             fb.turn({
-                width: fb.width(),
-                height: fb.height(),
+                width: $(window).width(),
+                height: $(window).height(),
                 autoCenter: true,
-                direction: 'rtl',    // Membuka dari kanan (Kitab)
-                acceleration: true,   // Biar ringan di HP
-                gradients: true,      // Efek bayangan saat kertas ditekuk
-                elevation: 50
+                display: 'single', // PAKSA SATU HALAMAN
+                direction: 'rtl',   // Tetap dari kanan ke kiri
+                acceleration: true,
+                gradients: true,
+                elevation: 0        // Menghilangkan bayangan tekukan agar fokus ke gambar full
+            });
+
+            // Mendukung swipe/geser di mana saja pada layar
+            $(document).on("touchstart", function(e) {
+                var startX = e.originalEvent.touches[0].pageX;
+                $(document).one("touchend", function(e) {
+                    var endX = e.originalEvent.changedTouches[0].pageX;
+                    if (startX - endX > 50) {
+                        fb.turn("next"); // Geser ke kiri
+                    } else if (endX - startX > 50) {
+                        fb.turn("previous"); // Geser ke kanan
+                    }
+                });
             });
         });
 
-        // Supaya ukuran tetap pas kalau layar HP diputar/resize
+        // Update ukuran jika layar berubah (misal rotasi)
         $(window).resize(function() {
-            $("#flipbook").turn("size", $("#viewport").width(), $("#viewport").height());
+            var w = $(window).width();
+            var h = $(window).height();
+            $("#flipbook").turn("size", w, h);
         });
     </script>
 
