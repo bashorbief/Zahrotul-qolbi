@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Jurmiyah - Full Screen Fix</title>
+    <title>Kitab Jurmiyah - Gaya Madrasah</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
@@ -12,36 +12,14 @@
         * { box-sizing: border-box; }
         body { 
             background-color: #000; 
-            margin: 0; 
-            padding: 0; 
+            margin: 0; padding: 0; 
             overflow: hidden; 
-            width: 100vw;
-            height: 100vh;
+            width: 100vw; height: 100vh;
         }
-        
-        #viewport {
-            width: 100%;
-            height: 100%;
-        }
-
-        #flipbook {
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-
-        .page {
-            background-color: white;
-            width: 100vw !important;
-            height: 100vh !important;
-        }
-
-        /* Memaksa gambar menutupi seluruh layar HP */
-        .page img {
-            width: 100vw;
-            height: 100vh;
-            display: block;
-            object-fit: fill; /* Gambar ditarik full ke pojok layar */
-        }
+        #viewport { width: 100%; height: 100%; }
+        #flipbook { width: 100vw !important; height: 100vh !important; }
+        .page { background-color: white; width: 100vw !important; height: 100vh !important; }
+        .page img { width: 100vw; height: 100vh; display: block; object-fit: fill; }
     </style>
 </head>
 <body>
@@ -66,12 +44,12 @@
                 display: 'single', 
                 acceleration: true,
                 gradients: true,
-                elevation: 100,
-                // Kita matikan arah default biar gak bentrok sama swipe manual
+                elevation: 150,    
+                duration: 1000,    
+                direction: 'rtl',  // PAKSA ARAH KITAB (Kanan ke Kiri)
                 autoCenter: true
             });
 
-            // LOGIKA USAP: KIRI KE KANAN (--->) UNTUK HALAMAN SELANJUTNYA
             var startX;
             $(document).on("touchstart", function(e) {
                 startX = e.originalEvent.touches[0].pageX;
@@ -81,11 +59,11 @@
                 var endX = e.originalEvent.changedTouches[0].pageX;
                 var distance = startX - endX;
 
-                // Jika jari ditarik ke KANAN (Kiri ke Kanan)
+                // LOGIKA KITAB: USAP KE KANAN (--->) UNTUK LANJUT KE HALAMAN BERIKUTNYA
                 if (distance < -50) { 
                     fb.turn("next"); 
                 } 
-                // Jika jari ditarik ke KIRI
+                // USAP KE KIRI (<---) UNTUK BALIK KE HALAMAN SEBELUMNYA
                 else if (distance > 50) {
                     fb.turn("previous");
                 }
