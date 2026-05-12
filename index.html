@@ -3,153 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buku 3D Interaktif</title>
+    <title>Buku Digital 3D Pro</title>
     <style>
-        :root {
-            --book-width: 300px;
-            --book-height: 400px;
-            --speed: 0.8s;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            background-color: #1a1a1a;
+            background-color: #111;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
+            min-height: 100vh;
             perspective: 2000px;
+            overflow: hidden;
         }
+
         .book {
-            width: var(--book-width);
-            height: var(--book-height);
             position: relative;
+            width: 90vw; /* Gambar hampir full layar */
+            height: 80vh;
+            max-width: 500px;
+            max-height: 700px;
             transform-style: preserve-3d;
-            transition: transform 0.5s;
+            transition: transform 0.7s cubic-bezier(0.15, 0, 0.15, 1);
         }
+
         .page {
+            position: absolute;
             width: 100%;
             height: 100%;
-            position: absolute;
             top: 0;
             left: 0;
-            transform-origin: left;
+            transform-origin: left center;
             transform-style: preserve-3d;
-            transition: transform var(--speed) cubic-bezier(0.645, 0.045, 0.355, 1);
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
         }
+
         .front, .back {
             position: absolute;
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 0 10px 10px 0;
-            box-shadow: inset -1px 0 2px rgba(0,0,0,0.3);
+            border-radius: 4px 15px 15px 4px;
+            overflow: hidden;
+            box-shadow: inset 20px 0 30px rgba(0,0,0,0.2);
         }
-        .front {
-            z-index: 2;
-            background: #fff;
+
+        /* Efek bayangan di lipatan tengah */
+        .front::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 30px;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0,0,0,0.3), transparent);
+            z-index: 10;
         }
+
         .back {
             transform: rotateY(180deg);
-            background: #e0e0e0;
-            z-index: 1;
+            background: #f0f0f0;
         }
+
         img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            border-radius: 0 10px 10px 0;
+            object-fit: cover; /* Gambar full memenuhi kotak */
+            display: block;
         }
-        /* Efek bayangan saat halaman terbuka */
+
+        /* Animasi Lipat */
         .page.flipped {
             transform: rotateY(-180deg);
         }
-        /* Mengatur tumpukan */
-        .p1 { z-index: 5; }
-        .p2 { z-index: 4; }
-        .p3 { z-index: 3; }
-        .p4 { z-index: 2; }
-        .p5 { z-index: 1; }
+
+        /* Indikator sudut melipat (Visual saja) */
+        .page:not(.flipped):hover {
+            transform: rotateY(-5deg);
+        }
     </style>
 </head>
 <body>
 
-    <div class="book" id="book">
-        <!-- Halaman 1 -->
-        <div class="page p1" id="page1">
+    <div class="book" id="myBook">
+        <!-- Lembar 1: Halaman 1 (Depan) & 2 (Belakang) -->
+        <div class="page" style="z-index: 5;">
             <div class="front"><img src="halaman1.jpg"></div>
             <div class="back"><img src="halaman2.jpg"></div>
         </div>
-        <!-- Halaman 2 -->
-        <div class="page p2" id="page2">
+
+        <!-- Lembar 2: Halaman 3 (Depan) & 4 (Belakang) -->
+        <div class="page" style="z-index: 4;">
             <div class="front"><img src="halaman3.jpg"></div>
             <div class="back"><img src="halaman4.jpg"></div>
         </div>
-        <!-- Halaman 3 (Contoh) -->
-        <div class="page p3" id="page3">
+
+        <!-- Lembar 3: Halaman 5 (Depan) & Penutup -->
+        <div class="page" style="z-index: 3;">
             <div class="front"><img src="halaman5.jpg"></div>
-            <div class="back" style="background:#fff;"><h3>Selesai</h3></div>
+            <div class="back" style="background:#eee; display:flex; align-items:center; justify-content:center;">
+                <h2>TAMAT</h2>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentLoc = 1;
-        let nPages = 3;
-        let maxLoc = nPages + 1;
-
         const pages = document.querySelectorAll('.page');
-        const book = document.querySelector('#book');
-
-        // Deteksi Swipe Sederhana
         let touchstartX = 0;
-        let touchendX = 0;
 
-        window.addEventListener('touchstart', e => {
-            touchstartX = e.changedTouches[0].screenX;
-        });
-
-        window.addEventListener('touchend', e => {
-            touchendX = e.changedTouches[0].screenX;
-            handleGesture();
-        });
-
-        function handleGesture() {
-            if (touchendX < touchstartX - 50) goNextPage();
-            if (touchendX > touchstartX + 50) goPrevPage();
-        }
-
-        // Navigasi Klik
         pages.forEach((page, index) => {
-            page.onclick = () => {
-                if (currentLoc === index + 1) {
-                    goNextPage();
-                } else if (currentLoc === index + 2) {
-                    goPrevPage();
+            // Klik atau Sentuh untuk balik halaman
+            page.addEventListener('touchstart', e => {
+                touchstartX = e.changedTouches[0].screenX;
+            });
+
+            page.addEventListener('touchend', e => {
+                let touchendX = e.changedTouches[0].screenX;
+                if (touchendX < touchstartX - 50) {
+                    page.classList.add('flipped');
+                    setTimeout(() => { page.style.zIndex = index; }, 500);
                 }
-            }
+                if (touchendX > touchstartX + 50) {
+                    page.classList.remove('flipped');
+                    setTimeout(() => { page.style.zIndex = 5 - index; }, 500);
+                }
+            });
+
+            // Fallback untuk Mouse
+            page.addEventListener('click', () => {
+                if (!page.classList.contains('flipped')) {
+                    page.classList.add('flipped');
+                    setTimeout(() => { page.style.zIndex = index; }, 500);
+                } else {
+                    page.classList.remove('flipped');
+                    setTimeout(() => { page.style.zIndex = 5 - index; }, 500);
+                }
+            });
         });
-
-        function goNextPage() {
-            if (currentLoc < maxLoc) {
-                const page = document.querySelector(`#page${currentLoc}`);
-                page.classList.add("flipped");
-                page.style.zIndex = currentLoc;
-                currentLoc++;
-            }
-        }
-
-        function goPrevPage() {
-            if (currentLoc > 1) {
-                currentLoc--;
-                const page = document.querySelector(`#page${currentLoc}`);
-                page.classList.remove("flipped");
-                // Kembalikan z-index tumpukan
-                page.style.zIndex = nPages - currentLoc + 5;
-            }
-        }
     </script>
 </body>
 </html>
