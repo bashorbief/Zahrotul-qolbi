@@ -3,37 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flipbox 3D</title>
+    <title>Buku Digital Swipe</title>
     <style>
-        body { background-color: #f0f0f0; display: flex; justify-content: center; padding: 50px; font-family: sans-serif; }
-        .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
-        
-        .flip-card { background-color: transparent; width: 200px; height: 300px; perspective: 1000px; }
-        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
-        .flip-card:hover .flip-card-inner { transform: rotateY(180deg); }
-        
-        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; border-radius: 10px; overflow: hidden; }
-        .flip-card-front img { width: 100%; height: 100%; object-fit: cover; }
-        .flip-card-back { background-color: #2980b9; color: white; transform: rotateY(180deg); display: flex; align-items: center; justify-content: center; }
+        body {
+            background-color: #222;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        .book-container {
+            width: 320px;
+            height: 450px;
+            perspective: 1500px;
+            position: relative;
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: left center;
+            transition: transform 0.6s ease, z-index 0.6s;
+            transform-style: preserve-3d;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .page img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 0 15px 15px 0;
+            backface-visibility: hidden;
+            box-shadow: inset -5px 0 10px rgba(0,0,0,0.2), 5px 0 15px rgba(0,0,0,0.5);
+        }
+
+        /* Efek Lipatan di Pojok */
+        .page::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 0; height: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 50%, rgba(0,0,0,0.2) 55%, rgba(255,255,255,1) 100%);
+            transition: width 0.3s, height 0.3s;
+            z-index: 5;
+            border-radius: 0 0 0 10px;
+        }
+
+        /* Saat disentuh/diusap, sudut melipat dulu */
+        .page.swiping::after {
+            width: 50px;
+            height: 50px;
+        }
+
+        .page.flipped {
+            transform: rotateY(-180deg);
+        }
+
+        /* Mengatur urutan tumpukan */
+        .p1 { z-index: 5; }
+        .p2 { z-index: 4; }
+        .p3 { z-index: 3; }
+        .p4 { z-index: 2; }
+        .p5 { z-index: 1; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Kartu 1 -->
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                <div class="flip-card-front"><img src="halaman1.jpg"></div>
-                <div class="flip-card-back"><h3>Halaman 1</h3></div>
-            </div>
-        </div>
-        <!-- Kartu 2 -->
-        <div class="flip-card">
-            <div class="flip-card-inner">
-                <div class="flip-card-front"><img src="halaman2.jpg"></div>
-                <div class="flip-card-back"><h3>Halaman 2</h3></div>
-            </div>
-        </div>
-        <!-- Tambahkan sampai kartu 5 dengan src halaman3.jpg, dst -->
+
+    <div class="book-container" id="book">
+        <div class="page p1" id="page1"><img src="halaman1.jpg"></div>
+        <div class="page p2" id="page2"><img src="halaman2.jpg"></div>
+        <div class="page p3" id="page3"><img src="halaman3.jpg"></div>
+        <div class="page p4" id="page4"><img src="halaman4.jpg"></div>
+        <div class="page p5" id="page5"><img src="halaman5.jpg"></div>
     </div>
+
+    <script>
+        let startX = 0;
+        let currentPage = 1;
+
+        const pages = document.querySelectorAll('.page');
+
+        pages.forEach(page => {
+            // Deteksi sentuhan HP atau Mouse
+            page.addEventListener('mousedown', startSwipe);
+            page.addEventListener('touchstart', startSwipe);
+
+            page.addEventListener('mousemove', moveSwipe);
+            page.addEventListener('touchmove', moveSwipe);
+
+            page.addEventListener('mouseup', endSwipe);
+            page.addEventListener('touchend', endSwipe);
+        });
+
+        function startSwipe(e) {
+            startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+            this.classList.add('swiping');
+        }
+
+        function moveSwipe(e) {
+            if (!startX) return;
+            let currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+            let diff = startX - currentX;
+
+            if (diff > 30) {
+                // Memberikan efek sudut melipat saat ditarik ke kiri
+                this.style.transform = `rotateY(${-diff/5}deg)`;
+            }
+        }
+
+        function endSwipe(e) {
+            let endX = e.type === 'touchend' ? e.changedTouches[0].clientX : e.clientX;
+            let diff = startX - endX;
+
+            this.classList.remove('swiping');
+            this.style.transform = ''; // Reset transform sementara
+
+            if (diff > 100) {
+                // Jika usapan cukup jauh, balikkan halaman
+                this.classList.add('flipped');
+                this.style.zIndex = 1;
+            } else {
+                // Jika usapan tanggung, kembalikan ke posisi semula
+                this.classList.remove('flipped');
+            }
+            startX = 0;
+        }
+    </script>
 </body>
 </html>
