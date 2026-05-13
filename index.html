@@ -2,30 +2,28 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buku Digital Saya</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Buku Digital Fullscreen</title>
     
-    <!-- Memanggil JQuery dan Turn.js via CDN -->
+    <!-- Library JQuery dan Turn.js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/script/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
-        body {
+        /* Menghilangkan scrollbar dan margin agar benar-benar full */
+        html, body {
             margin: 0;
             padding: 0;
-            background-color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        #book-container {
             width: 100%;
             height: 100%;
-            max-width: 500px; /* Lebar maksimal agar tidak terlalu gepeng di PC */
-            max-height: 800px;
+            overflow: hidden;
+            background-color: #000; /* Background hitam agar fokus ke gambar */
+        }
+
+        /* Container utama memenuhi layar */
+        #book-container {
+            width: 100vw;
+            height: 100vh;
         }
 
         #mybook {
@@ -33,16 +31,25 @@
             height: 100%;
         }
 
+        /* Styling per halaman agar 1 layer full */
         .page {
             width: 100%;
             height: 100%;
-            background-color: white;
+            background-color: #000;
         }
 
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: fill; /* Gambar akan memenuhi seluruh area halaman */
+            object-fit: cover; /* Gambar akan memenuhi layar, sedikit terpotong jika rasio beda tapi tidak ada celah kosong */
+            display: block;
+        }
+
+        /* Menghilangkan efek bayangan default di tengah agar terlihat seperti 1 layer */
+        .shadow {
+            -webkit-box-shadow: none !important;
+            -moz-box-shadow: none !important;
+            box-shadow: none !important;
         }
     </style>
 </head>
@@ -50,37 +57,46 @@
 
 <div id="book-container">
     <div id="mybook">
-        <!-- Halaman 1 sampai 5 -->
-        <div class="page"><img src="halaman1.jpg" alt="Halaman 1"></div>
-        <div class="page"><img src="halaman2.jpg" alt="Halaman 2"></div>
-        <div class="page"><img src="halaman3.jpg" alt="Halaman 3"></div>
-        <div class="page"><img src="halaman4.jpg" alt="Halaman 4"></div>
-        <div class="page"><img src="halaman5.jpg" alt="Halaman 5"></div>
+        <div class="page"><img src="halaman1.jpg"></div>
+        <div class="page"><img src="halaman2.jpg"></div>
+        <div class="page"><img src="halaman3.jpg"></div>
+        <div class="page"><img src="halaman4.jpg"></div>
+        <div class="page"><img src="halaman5.jpg"></div>
     </div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
-        // Inisialisasi efek buku
-        $("#mybook").turn({
-            width: $('#book-container').width(),
-            height: $('#book-container').height(),
+        var book = $("#mybook");
+
+        book.turn({
+            width: $(window).width(),
+            height: $(window).height(),
             autoCenter: true,
-            display: 'single', // Tampilan satu halaman seperti di HP
+            display: 'single', // Memastikan hanya 1 halaman (1 layer) yang tampil
             acceleration: true,
             gradients: true,
-            elevation: 50,
+            elevation: 100, // Membuat lengkungan saat geser lebih terasa
+            duration: 1000, // Kecepatan animasi lipatan
+            
+            // Pengaturan agar bisa digeser di mana saja (Full Area Touch)
             when: {
                 turning: function(event, page, view) {
-                    console.log("Membuka halaman: " + page);
+                    // Logika tambahan jika ingin aksi saat ganti halaman
                 }
             }
         });
+
+        // Memungkinkan geser di area mana saja di layar
+        $(window).bind('keydown', function(e) {
+            if (e.keyCode == 37) book.turn('previous');
+            else if (e.keyCode == 39) book.turn('next');
+        });
     });
 
-    // Agar responsif saat layar diputar
+    // Update ukuran otomatis jika orientasi layar berubah (Portrait/Landscape)
     $(window).resize(function() {
-        $("#mybook").turn("size", $('#book-container').width(), $('#book-container').height());
+        $("#mybook").turn("size", $(window).width(), $(window).height());
     });
 </script>
 
