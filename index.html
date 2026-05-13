@@ -3,81 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Digital Full</title>
+    <title>Buku Digital</title>
     
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/script/ajax/libs/turn.js/3/turn.min.js"></script>
+    <!-- Library CSS untuk transisi halus -->
+    <link rel="stylesheet" href="https://unpkg.com/pageable@latest/dist/pageable.min.css">
 
     <style>
         html, body {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            overflow: hidden; background-color: #000;
-        }
-
-        #mybook {
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .page {
-            width: 100%; height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
             background-color: #000;
         }
 
+        /* Setiap halaman memenuhi layar */
+        .page {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
         .page img {
-            width: 100%; height: 100%;
-            object-fit: fill; /* Gambar paksa penuh layar */
-            pointer-events: none; /* Agar gambar tidak mengganggu sentuhan */
+            width: 100%;
+            height: 100%;
+            object-fit: fill; /* Gambar paksa penuh layar sesuai permintaan */
+        }
+
+        /* Menghilangkan navigasi bawaan agar bersih */
+        .pg-pips {
+            display: none;
         }
     </style>
 </head>
 <body>
 
-<div id="mybook">
-    <div class="page"><img src="halaman1.jpg"></div>
-    <div class="page"><img src="halaman2.jpg"></div>
-    <div class="page"><img src="halaman3.jpg"></div>
-    <div class="page"><img src="halaman4.jpg"></div>
-    <div class="page"><img src="halaman5.jpg"></div>
+<div id="container">
+    <section class="page" data-anchor="p1">
+        <img src="halaman1.jpg">
+    </section>
+    <section class="page" data-anchor="p2">
+        <img src="halaman2.jpg">
+    </section>
+    <section class="page" data-anchor="p3">
+        <img src="halaman3.jpg">
+    </section>
+    <section class="page" data-anchor="p4">
+        <img src="halaman4.jpg">
+    </section>
+    <section class="page" data-anchor="p5">
+        <img src="halaman5.jpg">
+    </section>
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        var book = $("#mybook");
+<!-- Library JS Pageable -->
+<script src="https://unpkg.com/pageable@latest/dist/pageable.min.js"></script>
 
-        // Inisialisasi Turn.js
-        book.turn({
-            width: $(window).width(),
-            height: $(window).height(),
-            display: 'single',
-            acceleration: true,
-            gradients: true,
-            elevation: 50
-        });
-
-        // LOGIKA GESER DI MANA SAJA (Touch Swipe)
-        var startX;
-        
-        document.getElementById('mybook').addEventListener('touchstart', function(e) {
-            startX = e.touches[0].clientX;
-        }, false);
-
-        document.getElementById('mybook').addEventListener('touchend', function(e) {
-            var endX = e.changedTouches[0].clientX;
-            var threshold = 50; // Jarak minimal geser agar pindah (pixel)
-
-            if (startX - endX > threshold) {
-                book.turn('next'); // Geser ke kiri -> Halaman selanjutnya
-            } else if (endX - startX > threshold) {
-                book.turn('previous'); // Geser ke kanan -> Halaman sebelumnya
-            }
-        }, false);
-    });
-
-    // Perbaiki ukuran jika layar berputar
-    $(window).resize(function() {
-        $("#mybook").turn("size", $(window).width(), $(window).height());
+<script>
+    new Pageable("#container", {
+        childSelector: ".page", // Menentukan elemen mana yang jadi halaman
+        orientation: "horizontal", // Geser ke samping (seperti buku)
+        pips: false, // Menghilangkan titik navigasi
+        animation: 600, // Kecepatan pindah halaman (ms)
+        swipeThreshold: 50, // Sensitivitas geseran jari
+        freeScroll: false, // Berhenti tepat di setiap halaman
+        onInit: function() {
+            // Memastikan container benar-benar penuh
+            document.querySelector('#container').style.height = "100vh";
+        }
     });
 </script>
 
