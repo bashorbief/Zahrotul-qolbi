@@ -1,50 +1,50 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>Buku Digital Fullscreen</title>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1.0,
+maximum-scale=1.0,
+user-scalable=no">
+
+<title>Buku Digital</title>
 
 <!-- JQuery -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- Turn.js -->
+<!-- TurnJS BENAR -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
 
 <style>
 
-html, body{
+html,body{
     margin:0;
     padding:0;
     width:100%;
     height:100%;
     overflow:hidden;
-    background:#000;
+    background:black;
 }
 
-/* Container Fullscreen */
 #book-container{
     width:100vw;
     height:100vh;
-    position:relative;
 }
 
-/* Buku */
 #mybook{
     width:100%;
     height:100%;
 }
 
-/* Halaman */
 .page{
     width:100%;
     height:100%;
-    background:#fff;
+    background:white;
 }
 
-/* Gambar halaman */
 .page img{
     width:100%;
     height:100%;
@@ -61,23 +61,23 @@ html, body{
     <div id="mybook">
 
         <div class="page">
-            <img src="halaman1.jpg" alt="1">
+            <img src="halaman1.jpg">
         </div>
 
         <div class="page">
-            <img src="halaman2.jpg" alt="2">
+            <img src="halaman2.jpg">
         </div>
 
         <div class="page">
-            <img src="halaman3.jpg" alt="3">
+            <img src="halaman3.jpg">
         </div>
 
         <div class="page">
-            <img src="halaman4.jpg" alt="4">
+            <img src="halaman4.jpg">
         </div>
 
         <div class="page">
-            <img src="halaman5.jpg" alt="5">
+            <img src="halaman5.jpg">
         </div>
 
     </div>
@@ -90,34 +90,24 @@ $(document).ready(function(){
 
     $("#mybook").turn({
 
-        /* Fullscreen seperti kode pertama */
         width:$(window).width(),
         height:$(window).height(),
 
-        /* Animasi halus seperti kode kedua */
-        autoCenter:true,
         display:'single',
+
+        autoCenter:true,
+
         acceleration:true,
+
         gradients:true,
 
-        /* Sedang agar smooth */
-        elevation:50,
-
-        when:{
-
-            turning:function(event,page,view){
-
-                console.log("Membuka halaman : "+page);
-
-            }
-
-        }
+        elevation:50
 
     });
 
 });
 
-/* Responsive saat HP diputar */
+/* Resize */
 $(window).resize(function(){
 
     $("#mybook").turn(
