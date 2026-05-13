@@ -3,23 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Digital</title>
+    <title>Buku Digital Fullscreen</title>
     
-    <!-- Library CSS untuk transisi halus -->
-    <link rel="stylesheet" href="https://unpkg.com/pageable@latest/dist/pageable.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/script/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
-        html, body {
+        body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000;
+            background-color: #000; /* Hitam agar lebih elegan */
         }
 
-        /* Setiap halaman memenuhi layar */
-        .page {
+        #book-container {
             width: 100vw;
             height: 100vh;
             display: flex;
@@ -27,53 +26,83 @@
             align-items: center;
         }
 
+        #mybook {
+            width: 100%;
+            height: 100%;
+        }
+
+        .page {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: fill; /* Gambar paksa penuh layar sesuai permintaan */
+            /* 'fill' memaksa gambar penuh, 'cover' menjaga proporsi */
+            object-fit: fill; 
+            pointer-events: none; /* Penting agar geseran jari tembus ke sistem buku */
         }
 
-        /* Menghilangkan navigasi bawaan agar bersih */
-        .pg-pips {
-            display: none;
+        /* Menghilangkan bayangan default agar terlihat seperti 1 layer gambar utuh */
+        .shadow {
+            -webkit-box-shadow: none !important;
+            -moz-box-shadow: none !important;
+            box-shadow: none !important;
         }
     </style>
 </head>
 <body>
 
-<div id="container">
-    <section class="page" data-anchor="p1">
-        <img src="halaman1.jpg">
-    </section>
-    <section class="page" data-anchor="p2">
-        <img src="halaman2.jpg">
-    </section>
-    <section class="page" data-anchor="p3">
-        <img src="halaman3.jpg">
-    </section>
-    <section class="page" data-anchor="p4">
-        <img src="halaman4.jpg">
-    </section>
-    <section class="page" data-anchor="p5">
-        <img src="halaman5.jpg">
-    </section>
+<div id="book-container">
+    <div id="mybook">
+        <div class="page"><img src="halaman1.jpg" alt="1"></div>
+        <div class="page"><img src="halaman2.jpg" alt="2"></div>
+        <div class="page"><img src="halaman3.jpg" alt="3"></div>
+        <div class="page"><img src="halaman4.jpg" alt="4"></div>
+        <div class="page"><img src="halaman5.jpg" alt="5"></div>
+    </div>
 </div>
 
-<!-- Library JS Pageable -->
-<script src="https://unpkg.com/pageable@latest/dist/pageable.min.js"></script>
+<script type="text/javascript">
+    function loadBook() {
+        var width = $(window).width();
+        var height = $(window).height();
 
-<script>
-    new Pageable("#container", {
-        childSelector: ".page", // Menentukan elemen mana yang jadi halaman
-        orientation: "horizontal", // Geser ke samping (seperti buku)
-        pips: false, // Menghilangkan titik navigasi
-        animation: 600, // Kecepatan pindah halaman (ms)
-        swipeThreshold: 50, // Sensitivitas geseran jari
-        freeScroll: false, // Berhenti tepat di setiap halaman
-        onInit: function() {
-            // Memastikan container benar-benar penuh
-            document.querySelector('#container').style.height = "100vh";
-        }
+        $("#mybook").turn({
+            width: width,
+            height: height,
+            autoCenter: true,
+            display: 'single', // 1 layer saja
+            acceleration: true,
+            gradients: true,
+            elevation: 100, // Membuat tarikan lipatan lebih responsif
+            duration: 1000  // Kecepatan animasi
+        });
+    }
+
+    $(document).ready(function() {
+        loadBook();
+
+        // Logika agar bisa digeser di mana saja
+        var startX;
+        document.getElementById('mybook').addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        });
+
+        document.getElementById('mybook').addEventListener('touchend', function(e) {
+            var endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50) {
+                $("#mybook").turn("next");
+            } else if (endX - startX > 50) {
+                $("#mybook").turn("previous");
+            }
+        });
+    });
+
+    $(window).resize(function() {
+        $("#mybook").turn("size", $(window).width(), $(window).height());
     });
 </script>
 
