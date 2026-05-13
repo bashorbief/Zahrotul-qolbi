@@ -3,48 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Kitab Jurmiyah - Full Single Page</title>
+    <title>Flipbook Kitab Jurmiyah</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
 
     <style>
-        /* Menghilangkan semua margin agar benar-benar full */
-        * { box-sizing: border-box; }
         body { 
-            background-color: #000; 
+            background-color: #1a1a1a; 
             margin: 0; 
-            padding: 0; 
-            overflow: hidden; 
-            width: 100vw;
-            height: 100vh;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden;
         }
         
+        /* Area tempat buku berada */
         #viewport {
-            width: 100%;
-            height: 100%;
+            width: 90vw;
+            height: 80vh;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        /* Memaksa ukuran buku sama dengan ukuran layar HP */
+        /* Ukuran Buku */
         #flipbook {
-            width: 100vw !important;
-            height: 100vh !important;
+            width: 100%;
+            height: 100%;
         }
 
+        /* Gaya setiap halaman */
         .page {
             background-color: white;
-            width: 100vw !important;
-            height: 100vh !important;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
-        /* Gambar dibuat menutupi seluruh area halaman */
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: fill; /* Gunakan 'fill' agar benar-benar menutupi layar, atau 'contain' agar proporsional */
+            object-fit: contain; /* Agar gambar tidak gepeng */
         }
     </style>
 </head>
@@ -64,41 +63,23 @@
         $(window).ready(function() {
             var fb = $("#flipbook");
 
+            // Menjalankan animasi flip
             fb.turn({
-                width: $(window).width(),
-                height: $(window).height(),
+                width: fb.width(),
+                height: fb.height(),
                 autoCenter: true,
-                display: 'single', // PAKSA HANYA SATU HALAMAN
-                direction: 'ltr',   // Arah usap sesuai permintaan (Kiri ke Kanan)
-                acceleration: true,
-                gradients: true,
-                elevation: 100
-            });
-
-            // LOGIKA USAP: Kiri ke Kanan ---> Next
-            var startX;
-            $(document).on("touchstart", function(e) {
-                startX = e.originalEvent.touches[0].pageX;
-            });
-
-            $(document).on("touchend", function(e) {
-                var endX = e.originalEvent.changedTouches[0].pageX;
-                var distance = startX - endX;
-
-                if (Math.abs(distance) > 40) { 
-                    if (distance < 0) {
-                        fb.turn("next"); // Usap ke kanan untuk halaman baru
-                    } else {
-                        fb.turn("previous"); // Usap ke kiri untuk balik
-                    }
-                }
+                direction: 'rtl',    // Membuka dari kanan (Kitab)
+                acceleration: true,   // Biar ringan di HP
+                gradients: true,      // Efek bayangan saat kertas ditekuk
+                elevation: 50
             });
         });
 
-        // Pastikan ukuran tetap full jika orientasi layar berubah
+        // Supaya ukuran tetap pas kalau layar HP diputar/resize
         $(window).resize(function() {
-            $("#flipbook").turn("size", $(window).width(), $(window).height());
+            $("#flipbook").turn("size", $("#viewport").width(), $("#viewport").height());
         });
     </script>
+
 </body>
 </html>
