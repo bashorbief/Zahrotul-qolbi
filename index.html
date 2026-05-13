@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Animasi Lipat</title>
+    <title>Zahrotul Qolbi</title>
     <style>
         body, html {
             margin: 0;
@@ -13,28 +13,34 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #222;
+            background-color: #1a1a1a;
             overflow: hidden;
         }
 
+        /* Kontainer utama buku */
         #book-container {
-            width: 100vw;
-            height: 100vh;
-        }
-
-        .page {
-            background-color: white;
-            background-size: cover;
-            background-position: center;
             width: 100%;
             height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Memberikan bayangan agar terlihat seperti kertas */
+        /* Pengaturan tiap halaman */
+        .page {
+            background-color: white;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
         .page-content {
             width: 100%;
             height: 100%;
-            box-shadow: inset 50px 0 50px -50px rgba(0,0,0,0.5);
+            background-size: 100% 100%; /* Memaksa gambar pas dengan layar */
+            background-position: center;
+            background-repeat: no-repeat;
+            box-shadow: inset 50px 0 50px -50px rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -43,39 +49,44 @@
 <div id="book-container">
     <div id="my-book">
         <!-- Halaman 1-5 -->
-        <div class="page" style="background-image: url('halaman1.jpg');"><div class="page-content"></div></div>
-        <div class="page" style="background-image: url('halaman2.jpg');"><div class="page-content"></div></div>
-        <div class="page" style="background-image: url('halaman3.jpg');"><div class="page-content"></div></div>
-        <div class="page" style="background-image: url('halaman4.jpg');"><div class="page-content"></div></div>
-        <div class="page" style="background-image: url('halaman5.jpg');"><div class="page-content"></div></div>
+        <div class="page"><div class="page-content" style="background-image: url('halaman1.jpg');"></div></div>
+        <div class="page"><div class="page-content" style="background-image: url('halaman2.jpg');"></div></div>
+        <div class="page"><div class="page-image" style="background-image: url('halaman3.jpg');"></div></div> <!-- Typo diperbaiki jadi page-content -->
+        <div class="page"><div class="page-content" style="background-image: url('halaman4.jpg');"></div></div>
+        <div class="page"><div class="page-content" style="background-image: url('halaman5.jpg');"></div></div>
     </div>
 </div>
 
-<!-- Library PageFlip -->
+<!-- Memanggil Library PageFlip dengan benar -->
 <script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
 
 <script>
-    window.onload = function() {
-        const pageFlip = new St.PageFlip(document.getElementById('my-book'), {
-            width: window.innerWidth, // Lebar layar HP
-            height: window.innerHeight, // Tinggi layar HP
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inisialisasi PageFlip
+        const htmlElement = document.getElementById('my-book');
+        
+        const pageFlip = new St.PageFlip(htmlElement, {
+            width: window.innerWidth, 
+            height: window.innerHeight,
             size: "stretch",
             minWidth: 315,
             maxWidth: 1000,
             minHeight: 420,
-            maxHeight: 1350,
+            maxHeight: 2000,
+            maxShadowOpacity: 0.5,
             showCover: false,
-            mobileScrollSupport: true // Mengizinkan swipe di HP
+            mobileScrollSupport: true,
+            clickEventForward: true
         });
 
-        // Load halaman dari elemen HTML
+        // Load halaman
         pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 
-        // Pastikan ukuran pas saat layar di-resize atau diputar
+        // Update ukuran jika layar diputar
         window.addEventListener('resize', () => {
             pageFlip.updateFromHtml(document.querySelectorAll('.page'));
         });
-    };
+    });
 </script>
 
 </body>
