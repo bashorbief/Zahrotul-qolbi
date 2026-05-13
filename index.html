@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Digital Fullscreen</title>
+    <title>Buku Digital Asli</title>
     
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/script/ajax/libs/turn.js/3/turn.min.js"></script>
@@ -15,15 +15,12 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: #000; /* Hitam agar lebih elegan */
+            background-color: #000;
         }
 
         #book-container {
             width: 100vw;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         #mybook {
@@ -34,22 +31,13 @@
         .page {
             width: 100%;
             height: 100%;
-            background-color: #000;
         }
 
         .page img {
             width: 100%;
             height: 100%;
-            /* 'fill' memaksa gambar penuh, 'cover' menjaga proporsi */
-            object-fit: fill; 
-            pointer-events: none; /* Penting agar geseran jari tembus ke sistem buku */
-        }
-
-        /* Menghilangkan bayangan default agar terlihat seperti 1 layer gambar utuh */
-        .shadow {
-            -webkit-box-shadow: none !important;
-            -moz-box-shadow: none !important;
-            box-shadow: none !important;
+            object-fit: fill; /* Gambar dipaksa full layar */
+            display: block;
         }
     </style>
 </head>
@@ -57,50 +45,35 @@
 
 <div id="book-container">
     <div id="mybook">
-        <div class="page"><img src="halaman1.jpg" alt="1"></div>
-        <div class="page"><img src="halaman2.jpg" alt="2"></div>
-        <div class="page"><img src="halaman3.jpg" alt="3"></div>
-        <div class="page"><img src="halaman4.jpg" alt="4"></div>
-        <div class="page"><img src="halaman5.jpg" alt="5"></div>
+        <div class="page"><img src="halaman1.jpg"></div>
+        <div class="page"><img src="halaman2.jpg"></div>
+        <div class="page"><img src="halaman3.jpg"></div>
+        <div class="page"><img src="halaman4.jpg"></div>
+        <div class="page"><img src="halaman5.jpg"></div>
     </div>
 </div>
 
 <script type="text/javascript">
-    function loadBook() {
+    $(document).ready(function() {
         var width = $(window).width();
         var height = $(window).height();
 
         $("#mybook").turn({
             width: width,
             height: height,
-            autoCenter: true,
-            display: 'single', // 1 layer saja
-            acceleration: true,
-            gradients: true,
-            elevation: 100, // Membuat tarikan lipatan lebih responsif
-            duration: 1000  // Kecepatan animasi
-        });
-    }
-
-    $(document).ready(function() {
-        loadBook();
-
-        // Logika agar bisa digeser di mana saja
-        var startX;
-        document.getElementById('mybook').addEventListener('touchstart', function(e) {
-            startX = e.touches[0].clientX;
-        });
-
-        document.getElementById('mybook').addEventListener('touchend', function(e) {
-            var endX = e.changedTouches[0].clientX;
-            if (startX - endX > 50) {
-                $("#mybook").turn("next");
-            } else if (endX - startX > 50) {
-                $("#mybook").turn("previous");
+            display: 'single', // 1 halaman saja
+            acceleration: true, // Mempercepat animasi agar luwes
+            gradients: true,    // Menampilkan bayangan lipatan asli
+            elevation: 100,      // Tinggi lipatan saat ditarik
+            when: {
+                turning: function(e, page) {
+                    // Animasi perpindahan halaman
+                }
             }
         });
     });
 
+    // Menjaga agar tetap full layar saat HP diputar
     $(window).resize(function() {
         $("#mybook").turn("size", $(window).width(), $(window).height());
     });
