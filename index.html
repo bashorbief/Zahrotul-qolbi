@@ -1,144 +1,103 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buku Digital 3D Pro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Kitab Jurmiyah - Full Single Page</title>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
+
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* Menghilangkan semua margin agar benar-benar full */
+        * { box-sizing: border-box; }
+        body { 
+            background-color: #000; 
+            margin: 0; 
+            padding: 0; 
+            overflow: hidden; 
+            width: 100vw;
+            height: 100vh;
+        }
         
-        body {
-            background-color: #111;
+        #viewport {
+            width: 100%;
+            height: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            perspective: 2000px;
-            overflow: hidden;
         }
 
-        .book {
-            position: relative;
-            width: 90vw; /* Gambar hampir full layar */
-            height: 80vh;
-            max-width: 500px;
-            max-height: 700px;
-            transform-style: preserve-3d;
-            transition: transform 0.7s cubic-bezier(0.15, 0, 0.15, 1);
+        /* Memaksa ukuran buku sama dengan ukuran layar HP */
+        #flipbook {
+            width: 100vw !important;
+            height: 100vh !important;
         }
 
         .page {
-            position: absolute;
+            background-color: white;
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        /* Gambar dibuat menutupi seluruh area halaman */
+        .page img {
             width: 100%;
             height: 100%;
-            top: 0;
-            left: 0;
-            transform-origin: left center;
-            transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-
-        .front, .back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 4px 15px 15px 4px;
-            overflow: hidden;
-            box-shadow: inset 20px 0 30px rgba(0,0,0,0.2);
-        }
-
-        /* Efek bayangan di lipatan tengah */
-        .front::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            width: 30px;
-            height: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.3), transparent);
-            z-index: 10;
-        }
-
-        .back {
-            transform: rotateY(180deg);
-            background: #f0f0f0;
-        }
-
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Gambar full memenuhi kotak */
-            display: block;
-        }
-
-        /* Animasi Lipat */
-        .page.flipped {
-            transform: rotateY(-180deg);
-        }
-
-        /* Indikator sudut melipat (Visual saja) */
-        .page:not(.flipped):hover {
-            transform: rotateY(-5deg);
+            object-fit: fill; /* Gunakan 'fill' agar benar-benar menutupi layar, atau 'contain' agar proporsional */
         }
     </style>
 </head>
 <body>
 
-    <div class="book" id="myBook">
-        <!-- Lembar 1: Halaman 1 (Depan) & 2 (Belakang) -->
-        <div class="page" style="z-index: 5;">
-            <div class="front"><img src="halaman1.jpg"></div>
-            <div class="back"><img src="halaman2.jpg"></div>
-        </div>
-
-        <!-- Lembar 2: Halaman 3 (Depan) & 4 (Belakang) -->
-        <div class="page" style="z-index: 4;">
-            <div class="front"><img src="halaman3.jpg"></div>
-            <div class="back"><img src="halaman4.jpg"></div>
-        </div>
-
-        <!-- Lembar 3: Halaman 5 (Depan) & Penutup -->
-        <div class="page" style="z-index: 3;">
-            <div class="front"><img src="halaman5.jpg"></div>
-            <div class="back" style="background:#eee; display:flex; align-items:center; justify-content:center;">
-                <h2>TAMAT</h2>
-            </div>
+    <div id="viewport">
+        <div id="flipbook">
+            <div class="page"><img src="halaman1.jpg"></div>
+            <div class="page"><img src="halaman2.jpg"></div>
+            <div class="page"><img src="halaman3.jpg"></div>
+            <div class="page"><img src="halaman4.jpg"></div>
+            <div class="page"><img src="halaman5.jpg"></div>
         </div>
     </div>
 
-    <script>
-        const pages = document.querySelectorAll('.page');
-        let touchstartX = 0;
+    <script type="text/javascript">
+        $(window).ready(function() {
+            var fb = $("#flipbook");
 
-        pages.forEach((page, index) => {
-            // Klik atau Sentuh untuk balik halaman
-            page.addEventListener('touchstart', e => {
-                touchstartX = e.changedTouches[0].screenX;
+            fb.turn({
+                width: $(window).width(),
+                height: $(window).height(),
+                autoCenter: true,
+                display: 'single', // PAKSA HANYA SATU HALAMAN
+                direction: 'ltr',   // Arah usap sesuai permintaan (Kiri ke Kanan)
+                acceleration: true,
+                gradients: true,
+                elevation: 100
             });
 
-            page.addEventListener('touchend', e => {
-                let touchendX = e.changedTouches[0].screenX;
-                if (touchendX < touchstartX - 50) {
-                    page.classList.add('flipped');
-                    setTimeout(() => { page.style.zIndex = index; }, 500);
-                }
-                if (touchendX > touchstartX + 50) {
-                    page.classList.remove('flipped');
-                    setTimeout(() => { page.style.zIndex = 5 - index; }, 500);
-                }
+            // LOGIKA USAP: Kiri ke Kanan ---> Next
+            var startX;
+            $(document).on("touchstart", function(e) {
+                startX = e.originalEvent.touches[0].pageX;
             });
 
-            // Fallback untuk Mouse
-            page.addEventListener('click', () => {
-                if (!page.classList.contains('flipped')) {
-                    page.classList.add('flipped');
-                    setTimeout(() => { page.style.zIndex = index; }, 500);
-                } else {
-                    page.classList.remove('flipped');
-                    setTimeout(() => { page.style.zIndex = 5 - index; }, 500);
+            $(document).on("touchend", function(e) {
+                var endX = e.originalEvent.changedTouches[0].pageX;
+                var distance = startX - endX;
+
+                if (Math.abs(distance) > 40) { 
+                    if (distance < 0) {
+                        fb.turn("next"); // Usap ke kanan untuk halaman baru
+                    } else {
+                        fb.turn("previous"); // Usap ke kiri untuk balik
+                    }
                 }
             });
+        });
+
+        // Pastikan ukuran tetap full jika orientasi layar berubah
+        $(window).resize(function() {
+            $("#flipbook").turn("size", $(window).width(), $(window).height());
         });
     </script>
 </body>
