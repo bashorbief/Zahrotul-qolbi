@@ -3,65 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Saya</title>
+    <title>Buku Animasi Lipat</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
-        
         body, html {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #000;
-            overflow: hidden; /* Mencegah scroll atas bawah */
-        }
-
-        /* Container utama untuk geser horizontal */
-        .book-wrapper {
-            display: flex;
-            width: 100vw;
-            height: 100vh;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scroll-snap-type: x mandatory; /* Ini yang bikin gambar 'nempel' pas digeser */
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch; /* Supaya smooth di iPhone */
-        }
-
-        /* Sembunyikan scrollbar agar bersih */
-        .book-wrapper::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Tiap halaman buku */
-        .page {
-            min-width: 100vw;
-            height: 100vh;
-            scroll-snap-align: start;
             display: flex;
             justify-content: center;
             align-items: center;
+            background-color: #222;
+            overflow: hidden;
         }
 
-        .page img {
+        #book-container {
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .page {
+            background-color: white;
+            background-size: cover;
+            background-position: center;
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Gambar utuh, tidak terpotong */
-            pointer-events: none; /* Mencegah gambar 'terangkat' saat ditekan lama */
+        }
+
+        /* Memberikan bayangan agar terlihat seperti kertas */
+        .page-content {
+            width: 100%;
+            height: 100%;
+            box-shadow: inset 50px 0 50px -50px rgba(0,0,0,0.5);
         }
     </style>
 </head>
 <body>
 
-    <div class="book-wrapper">
-        <div class="page"><img src="halaman1.jpg"></div>
-        <div class="page"><img src="halaman2.jpg"></div>
-        <div class="page"><img src="halaman3.jpg"></div>
-        <div class="page"><img src="halaman4.jpg"></div>
-        <div class="page"><img src="halaman5.jpg"></div>
+<div id="book-container">
+    <div id="my-book">
+        <!-- Halaman 1-5 -->
+        <div class="page" style="background-image: url('halaman1.jpg');"><div class="page-content"></div></div>
+        <div class="page" style="background-image: url('halaman2.jpg');"><div class="page-content"></div></div>
+        <div class="page" style="background-image: url('halaman3.jpg');"><div class="page-content"></div></div>
+        <div class="page" style="background-image: url('halaman4.jpg');"><div class="page-content"></div></div>
+        <div class="page" style="background-image: url('halaman5.jpg');"><div class="page-content"></div></div>
     </div>
+</div>
+
+<!-- Library PageFlip -->
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.min.js"></script>
+
+<script>
+    window.onload = function() {
+        const pageFlip = new St.PageFlip(document.getElementById('my-book'), {
+            width: window.innerWidth, // Lebar layar HP
+            height: window.innerHeight, // Tinggi layar HP
+            size: "stretch",
+            minWidth: 315,
+            maxWidth: 1000,
+            minHeight: 420,
+            maxHeight: 1350,
+            showCover: false,
+            mobileScrollSupport: true // Mengizinkan swipe di HP
+        });
+
+        // Load halaman dari elemen HTML
+        pageFlip.loadFromHTML(document.querySelectorAll('.page'));
+
+        // Pastikan ukuran pas saat layar di-resize atau diputar
+        window.addEventListener('resize', () => {
+            pageFlip.updateFromHtml(document.querySelectorAll('.page'));
+        });
+    };
+</script>
 
 </body>
 </html>
