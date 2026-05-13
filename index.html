@@ -3,77 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Digital Mobile</title>
-    <!-- CSS Swiper -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <title>Buku Saya</title>
     <style>
-        html, body {
-            position: relative;
-            height: 100%;
+        * {
+            box-sizing: border-box;
+        }
+        
+        body, html {
             margin: 0;
             padding: 0;
-            background: #000;
-        }
-
-        .swiper {
             width: 100%;
             height: 100%;
+            background-color: #000;
+            overflow: hidden; /* Mencegah scroll atas bawah */
         }
 
-        .swiper-slide {
+        /* Container utama untuk geser horizontal */
+        .book-wrapper {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-snap-type: x mandatory; /* Ini yang bikin gambar 'nempel' pas digeser */
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch; /* Supaya smooth di iPhone */
+        }
+
+        /* Sembunyikan scrollbar agar bersih */
+        .book-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Tiap halaman buku */
+        .page {
+            min-width: 100vw;
+            height: 100vh;
+            scroll-snap-align: start;
             display: flex;
             justify-content: center;
             align-items: center;
         }
 
-        .swiper-slide img {
+        .page img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Agar gambar tidak terpotong, ganti ke 'cover' jika ingin full tanpa sisa hitam */
+            object-fit: contain; /* Gambar utuh, tidak terpotong */
+            pointer-events: none; /* Mencegah gambar 'terangkat' saat ditekan lama */
         }
     </style>
 </head>
 <body>
 
-    <!-- Slider main container -->
-    <div class="swiper">
-        <div class="swiper-wrapper">
-            <!-- Halaman 1-5 -->
-            <div class="swiper-slide"><img src="halaman1.jpg"></div>
-            <div class="swiper-slide"><img src="halaman2.jpg"></div>
-            <div class="swiper-slide"><img src="halaman3.jpg"></div>
-            <div class="swiper-slide"><img src="halaman4.jpg"></div>
-            <div class="swiper-slide"><img src="halaman5.jpg"></div>
-        </div>
-        <!-- Tambahan navigasi jika ingin titik-titik di bawah -->
-        <div class="swiper-pagination"></div>
+    <div class="book-wrapper">
+        <div class="page"><img src="halaman1.jpg"></div>
+        <div class="page"><img src="halaman2.jpg"></div>
+        <div class="page"><img src="halaman3.jpg"></div>
+        <div class="page"><img src="halaman4.jpg"></div>
+        <div class="page"><img src="halaman5.jpg"></div>
     </div>
 
-    <!-- JS Swiper -->
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-
-    <script>
-        const swiper = new Swiper('.swiper', {
-            // Efek lipatan/geser kreatif
-            effect: 'creative',
-            creativeEffect: {
-                prev: {
-                    shadow: true,
-                    translate: [0, 0, -400],
-                },
-                next: {
-                    translate: ['100%', 0, 0],
-                },
-            },
-            // Atau ganti ke effect: 'flip' jika ingin benar-benar seperti membalik kartu
-            
-            grabCursor: true,
-            loop: false,
-            pagination: {
-                el: '.swiper-pagination',
-                clickable: true,
-            },
-        });
-    </script>
 </body>
 </html>
