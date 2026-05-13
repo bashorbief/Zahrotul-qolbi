@@ -1,85 +1,88 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Flipbook Kitab Jurmiyah</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buku Digital Saya</title>
     
+    <!-- Memanggil JQuery dan Turn.js via CDN -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/blasten/turn.js/turn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/script/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
-        body { 
-            background-color: #1a1a1a; 
-            margin: 0; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            height: 100vh; 
-            overflow: hidden;
-        }
-        
-        /* Area tempat buku berada */
-        #viewport {
-            width: 90vw;
-            height: 80vh;
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
+            height: 100vh;
+            overflow: hidden;
         }
 
-        /* Ukuran Buku */
-        #flipbook {
+        #book-container {
+            width: 100%;
+            height: 100%;
+            max-width: 500px; /* Lebar maksimal agar tidak terlalu gepeng di PC */
+            max-height: 800px;
+        }
+
+        #mybook {
             width: 100%;
             height: 100%;
         }
 
-        /* Gaya setiap halaman */
         .page {
+            width: 100%;
+            height: 100%;
             background-color: white;
-            box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
         .page img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Agar gambar tidak gepeng */
+            object-fit: fill; /* Gambar akan memenuhi seluruh area halaman */
         }
     </style>
 </head>
 <body>
 
-    <div id="viewport">
-        <div id="flipbook">
-            <div class="page"><img src="halaman1.jpg"></div>
-            <div class="page"><img src="halaman2.jpg"></div>
-            <div class="page"><img src="halaman3.jpg"></div>
-            <div class="page"><img src="halaman4.jpg"></div>
-            <div class="page"><img src="halaman5.jpg"></div>
-        </div>
+<div id="book-container">
+    <div id="mybook">
+        <!-- Halaman 1 sampai 5 -->
+        <div class="page"><img src="halaman1.jpg" alt="Halaman 1"></div>
+        <div class="page"><img src="halaman2.jpg" alt="Halaman 2"></div>
+        <div class="page"><img src="halaman3.jpg" alt="Halaman 3"></div>
+        <div class="page"><img src="halaman4.jpg" alt="Halaman 4"></div>
+        <div class="page"><img src="halaman5.jpg" alt="Halaman 5"></div>
     </div>
+</div>
 
-    <script type="text/javascript">
-        $(window).ready(function() {
-            var fb = $("#flipbook");
-
-            // Menjalankan animasi flip
-            fb.turn({
-                width: fb.width(),
-                height: fb.height(),
-                autoCenter: true,
-                direction: 'rtl',    // Membuka dari kanan (Kitab)
-                acceleration: true,   // Biar ringan di HP
-                gradients: true,      // Efek bayangan saat kertas ditekuk
-                elevation: 50
-            });
+<script type="text/javascript">
+    $(document).ready(function() {
+        // Inisialisasi efek buku
+        $("#mybook").turn({
+            width: $('#book-container').width(),
+            height: $('#book-container').height(),
+            autoCenter: true,
+            display: 'single', // Tampilan satu halaman seperti di HP
+            acceleration: true,
+            gradients: true,
+            elevation: 50,
+            when: {
+                turning: function(event, page, view) {
+                    console.log("Membuka halaman: " + page);
+                }
+            }
         });
+    });
 
-        // Supaya ukuran tetap pas kalau layar HP diputar/resize
-        $(window).resize(function() {
-            $("#flipbook").turn("size", $("#viewport").width(), $("#viewport").height());
-        });
-    </script>
+    // Agar responsif saat layar diputar
+    $(window).resize(function() {
+        $("#mybook").turn("size", $('#book-container').width(), $('#book-container').height());
+    });
+</script>
 
 </body>
 </html>
