@@ -3,98 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Buku Digital Fullscreen</title>
+    <title>Buku Digital Full</title>
     
-    <!-- Library JQuery dan Turn.js -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/script/ajax/libs/turn.js/3/turn.min.js"></script>
 
     <style>
-        /* Menghilangkan scrollbar dan margin agar benar-benar full */
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #000; /* Background hitam agar fokus ke gambar */
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden; background-color: #000;
         }
 
-        /* Container utama memenuhi layar */
-        #book-container {
+        #mybook {
             width: 100vw;
             height: 100vh;
         }
 
-        #mybook {
-            width: 100%;
-            height: 100%;
-        }
-
-        /* Styling per halaman agar 1 layer full */
         .page {
-            width: 100%;
-            height: 100%;
+            width: 100%; height: 100%;
             background-color: #000;
         }
 
         .page img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; /* Gambar akan memenuhi layar, sedikit terpotong jika rasio beda tapi tidak ada celah kosong */
-            display: block;
-        }
-
-        /* Menghilangkan efek bayangan default di tengah agar terlihat seperti 1 layer */
-        .shadow {
-            -webkit-box-shadow: none !important;
-            -moz-box-shadow: none !important;
-            box-shadow: none !important;
+            width: 100%; height: 100%;
+            object-fit: fill; /* Gambar paksa penuh layar */
+            pointer-events: none; /* Agar gambar tidak mengganggu sentuhan */
         }
     </style>
 </head>
 <body>
 
-<div id="book-container">
-    <div id="mybook">
-        <div class="page"><img src="halaman1.jpg"></div>
-        <div class="page"><img src="halaman2.jpg"></div>
-        <div class="page"><img src="halaman3.jpg"></div>
-        <div class="page"><img src="halaman4.jpg"></div>
-        <div class="page"><img src="halaman5.jpg"></div>
-    </div>
+<div id="mybook">
+    <div class="page"><img src="halaman1.jpg"></div>
+    <div class="page"><img src="halaman2.jpg"></div>
+    <div class="page"><img src="halaman3.jpg"></div>
+    <div class="page"><img src="halaman4.jpg"></div>
+    <div class="page"><img src="halaman5.jpg"></div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function() {
         var book = $("#mybook");
 
+        // Inisialisasi Turn.js
         book.turn({
             width: $(window).width(),
             height: $(window).height(),
-            autoCenter: true,
-            display: 'single', // Memastikan hanya 1 halaman (1 layer) yang tampil
+            display: 'single',
             acceleration: true,
             gradients: true,
-            elevation: 100, // Membuat lengkungan saat geser lebih terasa
-            duration: 1000, // Kecepatan animasi lipatan
-            
-            // Pengaturan agar bisa digeser di mana saja (Full Area Touch)
-            when: {
-                turning: function(event, page, view) {
-                    // Logika tambahan jika ingin aksi saat ganti halaman
-                }
-            }
+            elevation: 50
         });
 
-        // Memungkinkan geser di area mana saja di layar
-        $(window).bind('keydown', function(e) {
-            if (e.keyCode == 37) book.turn('previous');
-            else if (e.keyCode == 39) book.turn('next');
-        });
+        // LOGIKA GESER DI MANA SAJA (Touch Swipe)
+        var startX;
+        
+        document.getElementById('mybook').addEventListener('touchstart', function(e) {
+            startX = e.touches[0].clientX;
+        }, false);
+
+        document.getElementById('mybook').addEventListener('touchend', function(e) {
+            var endX = e.changedTouches[0].clientX;
+            var threshold = 50; // Jarak minimal geser agar pindah (pixel)
+
+            if (startX - endX > threshold) {
+                book.turn('next'); // Geser ke kiri -> Halaman selanjutnya
+            } else if (endX - startX > threshold) {
+                book.turn('previous'); // Geser ke kanan -> Halaman sebelumnya
+            }
+        }, false);
     });
 
-    // Update ukuran otomatis jika orientasi layar berubah (Portrait/Landscape)
+    // Perbaiki ukuran jika layar berputar
     $(window).resize(function() {
         $("#mybook").turn("size", $(window).width(), $(window).height());
     });
