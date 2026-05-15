@@ -57,7 +57,11 @@
         var book = $("#flipbook");
         var slider = $("#page-slider");
         var label = $("#current-page");
-        var totalPages = 5; // Sesuaikan dengan jumlah halamanmu
+        var totalPages = 5;
+
+        // 1. Ambil data halaman terakhir yang tersimpan, kalau gak ada balik ke halaman akhir (5)
+        var lastPage = localStorage.getItem('last_opened_page');
+        var startPage = lastPage ? parseInt(lastPage) : totalPages;
 
         function resizeBook() {
             var width = $(window).width();
@@ -68,7 +72,7 @@
         book.turn({
             display: 'single',
             pages: totalPages,
-            page: totalPages, // INI KUNCINYA: Langsung buka halaman terakhir
+            page: startPage, // Buka halaman yang tersimpan
             acceleration: true,
             gradients: true,
             elevation: 1000,
@@ -76,18 +80,21 @@
                 turned: function(event, page) {
                     slider.val(page);
                     label.text(page);
+                    // 2. Simpan halaman setiap kali user membalik buku
+                    localStorage.setItem('last_opened_page', page);
                 }
             }
         });
 
-        // Set slider ke posisi akhir saat pertama muat
-        slider.val(totalPages);
-        label.text(totalPages);
+        slider.val(startPage);
+        label.text(startPage);
 
         slider.on('input', function() {
-            book.turn('page', $(this).val());
+            var val = $(this).val();
+            book.turn('page', val);
         });
 
+        // Swipe support
         var startX;
         book.on('touchstart', function(e) { startX = e.originalEvent.touches[0].pageX; });
         book.on('touchend', function(e) {
@@ -100,6 +107,7 @@
         resizeBook();
     });
 </script>
+
 
 
 </body>
