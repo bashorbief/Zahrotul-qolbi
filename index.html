@@ -2,39 +2,54 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>flipbook halaman akhir</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>flipbook full</title>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script type="text/javascript" src="https://rawcdn.githack.com/blasten/turn.js/master/turn.min.js"></script>
     <style>
         body { 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            height: 100vh; background: #1a1a1a; margin: 0; overflow: hidden; font-family: sans-serif;
+            display: flex; flex-direction: column; justify-content: space-between; 
+            height: 100vh; background: #000; margin: 0; overflow: hidden; 
+        }
+        /* Kontainer utama dibuat memenuhi layar */
+        .book-wrapper {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
         #flipbook {
-            width: 90vw; max-width: 450px; height: 75vh;
+            width: 100vw; 
+            height: 80vh; /* Sisakan ruang untuk slider di bawah */
         }
-        .page { width: 100%; height: 100%; background-color: white; }
-        .page img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        .page { width: 100%; height: 100%; background-color: #000; }
+        .page img { width: 100%; height: 100%; object-fit: contain; }
 
-        .controls { width: 80%; max-width: 400px; margin-top: 20px; text-align: center; }
-        input[type=range] { width: 100%; cursor: pointer; accent-color: #555; }
-        .page-num { color: white; margin-top: 5px; font-size: 14px; }
+        /* Style Slider agar lebih rapi di bawah */
+        .controls { 
+            width: 100%; padding: 15px 0; background: rgba(0,0,0,0.8);
+            text-align: center; 
+        }
+        input[type=range] { width: 80%; cursor: pointer; accent-color: #fff; }
+        .page-num { color: white; margin-top: 5px; font-size: 14px; font-family: sans-serif; }
     </style>
 </head>
 <body>
 
-<div id="flipbook">
-    <div class="page"><img src="halaman1.jpg"></div>
-    <div class="page"><img src="halaman2.jpg"></div>
-    <div class="page"><img src="halaman3.jpg"></div>
-    <div class="page"><img src="halaman4.jpg"></div>
-    <div class="page"><img src="halaman5.jpg"></div>
+<div class="book-wrapper">
+    <div id="flipbook">
+        <div class="page"><img src="halaman1.jpg"></div>
+        <div class="page"><img src="halaman2.jpg"></div>
+        <div class="page"><img src="halaman3.jpg"></div>
+        <div class="page"><img src="halaman4.jpg"></div>
+        <div class="page"><img src="halaman5.jpg"></div>
+    </div>
 </div>
 
 <div class="controls">
-    <input type="range" id="page-slider" min="1" max="5" value="5">
-    <div class="page-num">Halaman: <span id="current-page">5</span> / 5</div>
+    <input type="range" id="page-slider" min="1" max="5" value="1">
+    <div class="page-num">Halaman: <span id="current-page">1</span> / 5</div>
 </div>
 
 <script type="text/javascript">
@@ -43,10 +58,15 @@
         var slider = $("#page-slider");
         var label = $("#current-page");
 
+        // Fungsi untuk mengatur ukuran buku secara dinamis
+        function resizeBook() {
+            var width = $(window).width();
+            var height = $(window).height() * 0.8; // 80% dari tinggi layar
+            book.turn("size", width, height);
+        }
+
         book.turn({
             display: 'single',
-            pages: 5,          // Total halaman
-            page: 5,           // INI KUNCINYA: Langsung buka halaman 5
             acceleration: true,
             gradients: true,
             elevation: 1000,
@@ -59,11 +79,10 @@
         });
 
         slider.on('input', function() {
-            var val = $(this).val();
-            book.turn('page', val);
-            label.text(val);
+            book.turn('page', $(this).val());
         });
 
+        // Swipe support
         var startX;
         book.on('touchstart', function(e) { startX = e.originalEvent.touches[0].pageX; });
         book.on('touchend', function(e) {
@@ -71,10 +90,9 @@
             if (startX - endX > 50) { book.turn('next'); }
             else if (startX - endX < -50) { book.turn('previous'); }
         });
-    });
 
-    $(window).resize(function() {
-        $("#flipbook").turn("size", $("#flipbook").width(), $("#flipbook").height());
+        $(window).resize(resizeBook);
+        resizeBook(); // Jalankan saat pertama buka
     });
 </script>
 
