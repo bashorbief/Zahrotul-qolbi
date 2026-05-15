@@ -1,33 +1,44 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>My GitHub Flipbook</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>flipbook github</title>
     <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
     <style>
-        body { display: flex; justify-content: center; align-items: center; height: 100vh; background: #333; margin: 0; }
-        .container { width: 800px; height: 600px; }
-        .page { background-color: white; border: 1px solid #ccc; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .page-content { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background: #222; 
+            margin: 0; 
+        }
+        .container { width: 800px; height: 550px; }
+        .page { background: white; }
         img { width: 100%; height: 100%; object-fit: cover; }
     </style>
 </head>
 <body>
 
-<div class="container" id="book">
-    <!-- Tambahkan halaman sebanyak yang Anda mau -->
-    <div class="page"><div class="page-content"><img src="images/1.jpg"></div></div>
-    <div class="page"><div class="page-content"><img src="images/2.jpg"></div></div>
-    <div class="page"><div class="page-content"><img src="images/3.jpg"></div></div>
-    <div class="page"><div class="page-content"><img src="images/4.jpg"></div></div>
+<div class="container" id="flipbook">
+    <div class="page"><img src="images/halaman1.jpg"></div>
+    <div class="page"><img src="images/halaman2.jpg"></div>
+    <div class="page"><img src="images/halaman3.jpg"></div>
+    <div class="page"><img src="images/halaman4.jpg"></div>
+    <div class="page"><img src="images/halaman5.jpg"></div>
 </div>
 
 <script>
-    const pageFlip = new St.PageFlip(document.getElementById('book'), {
-        width: 400, // ukuran per halaman
-        height: 600,
-        showCover: true
+    document.addEventListener('DOMContentLoaded', function() {
+        const pageflip = new St.PageFlip(document.getElementById('flipbook'), {
+            width: 400,
+            height: 550,
+            size: "stretch",
+            showCover: true
+        });
+        pageflip.loadFromHTML(document.querySelectorAll('.page'));
     });
-    pageFlip.loadFromHTML(document.querySelectorAll('.page'));
 </script>
 
 </body>
