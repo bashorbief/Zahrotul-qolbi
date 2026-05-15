@@ -11,31 +11,43 @@
             justify-content: center; 
             align-items: center; 
             height: 100vh; 
-            background: #222; 
+            background: #e0e0e0; /* warna background lebih terang agar bayangan buku terlihat */
             margin: 0; 
+            overflow: hidden;
         }
-        .container { width: 800px; height: 550px; }
-        .page { background: white; }
-        img { width: 100%; height: 100%; object-fit: cover; }
+        /* Kontainer dibuat lebar agar muat 2 halaman */
+        .container { width: 1000px; height: 700px; display: flex; justify-content: center; }
+        .page { background: white; box-shadow: inset 0 0 10px rgba(0,0,0,0.1); }
+        img { width: 100%; height: 100%; object-fit: fill; }
     </style>
 </head>
 <body>
 
-<div class="container" id="flipbook">
-    <div class="page"><img src="halaman1.jpg"></div>
-    <div class="page"><img src="halaman2.jpg"></div>
-    <div class="page"><img src="halaman3.jpg"></div>
-    <div class="page"><img src="halaman4.jpg"></div>
-    <div class="page"><img src="halaman5.jpg"></div>
+<div class="container">
+    <div id="flipbook">
+        <div class="page"><img src="halaman1.jpg"></div>
+        <div class="page"><img src="halaman2.jpg"></div>
+        <div class="page"><img src="halaman3.jpg"></div>
+        <div class="page"><img src="halaman4.jpg"></div>
+        <div class="page"><img src="halaman5.jpg"></div>
+    </div>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const pageflip = new St.PageFlip(document.getElementById('flipbook'), {
-            width: 400,
-            height: 550,
+            width: 500, // lebar satu halaman
+            height: 700, // tinggi halaman
             size: "stretch",
-            showCover: true
+            minWidth: 315,
+            maxWidth: 1000,
+            minHeight: 420,
+            maxHeight: 1350,
+            showCover: false, // Diubah ke false agar langsung buka dua halaman
+            drawShadow: true,
+            maxShadowOpacity: 0.5,
+            usePortrait: false, // Memaksa tampilan landscape (dua halaman)
+            flippingTime: 1000
         });
         pageflip.loadFromHTML(document.querySelectorAll('.page'));
     });
