@@ -3,26 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>flipbook github</title>
-    <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.js"></script>
+    <title>flipbook satu halaman</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://rawcdn.githack.com/blasten/turn.js/master/turn.min.js"></script>
     <style>
         body { 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             height: 100vh; 
-            background: #222; 
-            margin: 0; 
+            background: #1a1a1a; 
+            margin: 0;
+            overflow: hidden;
         }
-        /* Kontainer dibuat lebih ramping untuk satu halaman */
-        .container { width: 450px; height: 650px; }
-        .page { background: white; }
-        img { width: 100%; height: 100%; object-fit: contain; }
+        #flipbook {
+            width: 90vw; /* Mengikuti lebar layar */
+            max-width: 450px;
+            height: 80vh; /* Mengikuti tinggi layar */
+        }
+        .page {
+            width: 100%;
+            height: 100%;
+            background-color: white;
+        }
+        .page img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Gambar tidak terpotong */
+        }
     </style>
 </head>
 <body>
 
-<div class="container" id="flipbook">
+<div id="flipbook">
     <div class="page"><img src="halaman1.jpg"></div>
     <div class="page"><img src="halaman2.jpg"></div>
     <div class="page"><img src="halaman3.jpg"></div>
@@ -30,17 +43,22 @@
     <div class="page"><img src="halaman5.jpg"></div>
 </div>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const pageflip = new St.PageFlip(document.getElementById('flipbook'), {
-            width: 450,
-            height: 650,
-            size: "stretch",
-            showCover: false,
-            usePortrait: true, // INI KUNCINYA: Memaksa satu halaman saja
-            startPage: 0
+<script type="text/javascript">
+    $(window).ready(function() {
+        $("#flipbook").turn({
+            width: $("#flipbook").width(),
+            height: $("#flipbook").height(),
+            autoCenter: true,
+            display: 'single', // MENGUNCI ke satu halaman saja
+            acceleration: true,
+            gradients: true,
+            elevation: 50
         });
-        pageflip.loadFromHTML(document.querySelectorAll('.page'));
+    });
+
+    // Agar tetap pas saat layar diputar/resize
+    $(window).resize(function() {
+        $("#flipbook").turn("size", $("#flipbook").width(), $("#flipbook").height());
     });
 </script>
 
